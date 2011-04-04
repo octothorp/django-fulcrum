@@ -1,0 +1,5 @@
+Basic usage
+
+1. Add fulcrum to installed apps
+2. Include fulcrum in your url conf
+2. Register a model with fulcrum
