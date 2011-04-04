@@ -79,4 +79,4 @@ FIXTURE_DIRS = (
     os.path.join(BASE_PATH, 'fixtures'),
 )
 
-#APPEND_SLASH = False
+APPEND_SLASH = False

@@ -46,7 +46,7 @@ class Schema:
         
         self.documentation = documentation
         
-        from settings import LANGUAGE_CODE
+        from django.conf.global_settings import LANGUAGE_CODE
         self.language = LANGUAGE_CODE
         
         self._prepare()

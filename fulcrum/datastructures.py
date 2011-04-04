@@ -120,7 +120,7 @@ class EasyInstance(object):
         return self.__unicode__().encode('utf-8')
         
     def url(self):
-        return mark_safe('{0}/{1}'.format(self.model.resource.name, self.pk()))
+        return mark_safe('{0}/{1}/'.format(self.model.resource.name, self.pk()))
 
     def pk(self):
         return self.instance._get_pk_val()
@@ -198,7 +198,7 @@ class EasyInstanceField(object):
             if resource.name in self.model.resource.site.get_resource_list():
                 lst = []
                 for value in self.values():
-                    url = mark_safe('{0}/{1}'.format(resource.name, iri_to_uri(value._get_pk_val())))
+                    url = mark_safe('{0}/{1}/'.format(resource.name, iri_to_uri(value._get_pk_val())))
                     lst.append((smart_unicode(value), url))
             else:
                 lst = [(value, None) for value in self.values()]
