@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+  <object pk="1" model="blog.blogpost">
+    <field type="CharField" name="title">Sample test post 1</field>
+    <field type="TextField" name="content">This is the content of sample test post 1</field>
+    <field to="auth.user" name="author" rel="ManyToOneRel">1</field>
+    <field type="DateTimeField" name="created_on">2011-04-01 15:31:24</field>
+    <field type="CharField" name="gender">F</field>
+  </object>
+  <object pk="2" model="blog.blogpost">
+    <field type="CharField" name="title">Sample test post 2</field>
+    <field type="TextField" name="content">blah blah blah</field>
+    <field to="auth.user" name="author" rel="ManyToOneRel">1</field>
+    <field type="DateTimeField" name="created_on">2011-04-01 15:31:44</field>
+    <field type="CharField" name="gender">M</field>
+  </object>
+</django-objects>

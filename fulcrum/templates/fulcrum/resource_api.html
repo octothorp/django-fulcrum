@@ -1,0 +1,112 @@
+{% extends "fulcrum/base_site.html" %}
+
+{% block extrahead %}
+<style type="text/css">
+
+#methods { margin: 0px 0px 30px 0px; }
+#methodstable td img { margin: 0; padding: 2px 0px 0px 0px; float: right; }
+
+#schema { margin: 0px 0px 30px 0px; }
+#schemaheader { overflow: hidden; width: 100%; clear: both; }
+#schemaheader h2 { margin: 0; float: left; }
+#schemaheader p { margin: 0; float: right; text-align: right; line-height: 2.35em;}
+
+#schematable td.spectrue { background: #eee url('/media/images/green_check.png') no-repeat center center; }
+#schematable td.specfalse { background: #eee url('/media/images/red_x.png') no-repeat center center; }
+
+#connection { margin: 0px 0px 30px 0px; }
+#response { margin: 0px 0px 30px 0px; }
+
+</style>
+
+{% endblock %}
+{% block title %}{{ resource.verbose_name|capfirst }} API{% endblock %}
+
+{% block content %}
+
+<div class="arrowtitle">
+    <img src="/media/images/orange_arrow.png"/>
+    <h1>{{ resource.verbose_name|capfirst }}</h1>
+</div>
+
+<div id="methods">
+    <div id="methodsheader">
+        <h2>Methods Available</h2>
+    </div>
+    <table id="methodstable">
+        <tr>
+            <td width="25%">GET{% if 'GET' in resource.get_allowed_methods %}<img src="/media/images/green_check.png">{% else %}<img src="/media/images/red_x.png"/>{% endif %}</td>
+            <td width="25%">POST{% if 'POST' in resource.get_allowed_methods %}<img src="/media/images/green_check.png">{% else %}<img src="/media/images/red_x.png"/>{% endif %}</td>
+            <td width="25%">PUT{% if 'PUT' in resource.get_allowed_methods %}<img src="/media/images/green_check.png">{% else %}<img src="/media/images/red_x.png"/>{% endif %}</td>
+            <td width="25%">DELETE{% if 'DELETE' in resource.get_allowed_methods %}<img src="/media/images/green_check.png">{% else %}<img src="/media/images/red_x.png"/>{% endif %}</td>
+        </tr>
+    </table>
+</div>
+
+<div id="schema">
+    <div id="schemaheader">
+        <h2>Schema</h2>
+        <p>View Schema as:
+        {% for key, value in schema_urls.items %}
+            <a href="{% url fulcrum:fulcrum_index %}{{ value }}">{{ key|upper }}</a>{% if not forloop.last %},{% endif %}
+        {% endfor %}
+        </p>
+    </div>
+    <table id="schematable">
+        <tr>
+            <th width="90px">Field Name</th>
+            <th width="120px">Type</th>
+            <th width="75px">Length</th>
+            <th width="100%">Description</th>
+            <th width="90px">Choices</th>
+            <th width="65px">NULL</th>
+            <th width="90px">Required</th>
+        </tr>
+        {% for field in resource.fields %}
+            <tr>
+                <th class="nobg">{{ field.name }}</th>
+                <!--<td>{{ field.type }}</td>-->
+                <td>
+                    {% for value, url in field.type %}
+                        {% if url %}<a href="{% url fulcrum:fulcrum_index %}{{ url }}">{% endif %}{{ value }}{% if url %}</a>{% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ field.max_length }}</td>
+                <td>{{ field.description }}</td>
+                <td>
+                    {% if field.has_choices %}
+                        {% for choice in field.choices %}
+                            {{ choice.value }}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    {% else %}
+                        None
+                    {% endif %}
+                </td>
+                <td class="{% if field.null %}spectrue{% else %}specfalse{% endif %}"></td>
+                <td class="{% if field.blank %}specfalse{% else %}spectrue{% endif %}"></td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div id="connection">
+    <div id="connectionheader">
+        <h2>Connection Example</h2>
+    </div>
+    
+    <div class="example">
+        <pre>{{ request_example }}</pre>
+    </div>
+</div>
+
+<div id="response">
+    <div id="responseheader">
+        <h2>Response Example</h2>
+    </div>
+    
+    <div class="example">
+        <pre>{{ response_example }}</pre>
+    </div>
+</div>
+
+{% endblock %}

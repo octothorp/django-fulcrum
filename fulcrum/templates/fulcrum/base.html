@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+<title>{% block title %}{% endblock %}</title>
+{% block style %}
+<style type="text/css">
+* { margin:0; padding:0; }
+body { background:#eee; color:#535353; font:76%/1.6 "Helvetica Neue", Verdana, sans-serif; font-weight: 500; }
+a { color: #ce5c34; text-decoration:none; }
+a:hover { text-decoration:underline; }
+a img { border:none; }
+h1 { font-size:1.8em; font-weight: 300; color:#878787; margin:0.4em 0 0.2em 0;  }
+h2 { font-size:1.5em; font-weight: 300; color:#878787; margin:1em 0 0.2em 0; }
+p { margin:0.5em 0 1em 0; }
+pre { font-family: "Courier"; background-color: #fff; border: 1px solid #ccc; width: 98%; margin: 0; padding: 1%; }
+table { margin: 0; padding: 0; width: 100%; clear: both; border-color: #ccc; border-width: 0 0 1px 1px; border-style: solid; border-spacing: 0; }
+th { color: #666; background-color: #fff; margin: 0; padding: 12px 12px; text-align: left; vertical-align: top; border-color: #ccc; border-width: 1px 1px 0 0; border-style: solid; }
+th.nobg { padding: 6px 12px; background-color: #eee; }
+td { margin: 0; padding: 6px 12px; text-align: left; vertical-align: top; border-color: #ccc; border-width: 1px 1px 0 0; border-style: solid; }
+.odd { background-color:#EDF3FE; }
+.quiet { color:#666; }
+.arrowtitle { overflow: hidden; width: 100%; }
+.arrowtitle img { float: left; margin: 0px 10px 0px 0px; }
+.arrowtitle h1 { float: left; }
+
+/* FILTERS */
+.filter { color:#999; font-size:0.9em; float:left; margin-bottom:10px; margin-right:20px; }
+.filter strong { color:#666; }
+/* OBJECT LISTS */
+.objectlist { clear:both; margin:0 -20px; color:#666; }
+.objectlist li a { display:block; padding:1em 20px; }
+.objectlist li a:hover { background:#5b80b2; color:#3B5572; color:#fff; text-decoration:none; }
+.related h2 { font-size: 1em; margin-bottom: 0.6em; }
+.related .objectlist li a { padding: 0.6em 20px; }
+.related .objectlist li.odd { background:#eee; }
+/* OBJECT DETAIL */
+.objectinfo { border-collapse:collapse; color:#666; margin:0; }
+.objectinfo td, .objectinfo th { padding:1em 20px; vertical-align:top; }
+.objectinfo td { width:100%; }
+.objectinfo th { text-align:left; white-space:nowrap; }
+/* MODEL GROUPS */
+.modelgroup { color:#999; font-size:0.9em; margin:0 -20px; }
+.modelgroup h2 { font-size:1.2em; margin:0; }
+.modelgroup h2 a { display: block; padding: 0.83em 20px; }
+.modelgroup h2 a:hover { text-decoration: none; color: #fff; }
+.modelgroup p { float:left; margin:-2.65em 0 0 14em; position:relative; }
+.modelgroup p a { padding-right: 20px; white-space:nowrap; }
+.modelgroup a.more { color:#999; }
+.modelgroup:hover { background:#5b80b2; color:#becfe5; }
+.modelgroup:hover p a { color:#becfe5; }
+.modelgroup:hover a { color:#fff; }
+.modelgroup:hover a.more { color:#fff; }
+/* BREADCRUMBS */
+#breadcrumbs { padding:10px 0; color:#999; font-size:0.9em; float: left; }
+/* HEADER */
+#header a { display:block; background:#eee; color:#676868; padding: 0px 20px 80px 20px; font-weight:bold; font-size:1em; text-decoration:none; }
+#header a:hover { text-decoration:underline; }
+
+pre {
+ white-space: pre-wrap;       /* css-3 */
+ white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+ white-space: -pre-wrap;      /* Opera 4-6 */
+ white-space: -o-pre-wrap;    /* Opera 7 */
+ word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+/* CONTENT */
+#content { padding:0 20px; }
+</style>
+{% endblock %}
+{% block extrahead %}{% endblock %}
+</head>
+<body id="{% block bodyid %}page{% endblock %}">
+<div id="header"><a href="{% url fulcrum:fulcrum_index %}"><img src="/media/images/logo.png"/></a></div>
+<div id="content">
+{% block content %}{% endblock %}
+</div>
+</body>
+</html>
