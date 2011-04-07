@@ -20,6 +20,6 @@ if sandbox.settings.DEBUG:
 
 auth = fulcrum.authentication.HttpBasicAuthentication(realm="My realm")
 fulcrum.site.register(Blogpost, authentication=auth)
-fulcrum.site.register(User, authentication=auth)
-fulcrum.site.register(Permission, authentication=auth)
-fulcrum.site.register(Group, authentication=auth)
+#fulcrum.site.register(User, authentication=auth)
+#fulcrum.site.register(Permission, authentication=auth)
+#fulcrum.site.register(Group, authentication=auth)

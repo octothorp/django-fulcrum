@@ -137,6 +137,7 @@ class DefaultHandler(BaseHandler):
             return rc.NOT_IMPLEMENTED
         
         attrs = self.flatten_dict(request.POST)
+        print 'attrs {0}'.format(attrs)
         
         missing_fields = []
         
@@ -149,6 +150,10 @@ class DefaultHandler(BaseHandler):
             
             if req:
                 if type(field) == ForeignKey or type(field) == ManyToManyField:
+                    
+                    # TODO: get the object and set it explicitly
+                    
+                    '''
                     f_field = self.model._meta.get_field_by_name(field.name)
                     
                     if f_field[0].rel.to == User:
@@ -161,21 +166,22 @@ class DefaultHandler(BaseHandler):
                     else:
                         # TODO: how to handle other model types?
                         pass
+                        '''
                 else:
                     print 'checking against attrs...'
                     if field.name not in attrs.keys() or attrs[field.name] == '':
                         print 'appending to missing_fields'
-                        missing_fields.append((field.name, type(field).__name__))
+                        #missing_fields.append((field.name, type(field).__name__))
         
         print 'missing_fields: {0}'.format(missing_fields)
         
-        if len(missing_fields) > 0:
+        '''if len(missing_fields) > 0:
             resp = rc.BAD_REQUEST
             resp.write('\nThe following fields are required:')
             for field, typ in missing_fields:
                 resp.write('\n-- {0}:{1}'.format(field, typ))
             return resp
-        
+        '''
         
         try:
             inst = self.model.objects.get(**attrs)

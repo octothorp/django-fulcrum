@@ -23,6 +23,8 @@ from django.utils.text import capfirst
 from django.utils.encoding import smart_unicode, smart_str, iri_to_uri
 from django.utils.safestring import mark_safe
 from django.contrib.contenttypes.models import ContentType
+from django.template.loader import get_template
+from django.template import Context
 
 from datastructures import EasyModel
 import schemas
@@ -183,25 +185,30 @@ class Resource(object):
                     format_error('\n'.join(rep.format_exception())))
             else:
                 raise
-
-        emitter, ct = Emitter.get(em_format)
-        srl = emitter(result, typemapper, handler, handler.fields, anonymous)
         
-        try:
-            """
-            Decide whether or not we want a generator here,
-            or we just want to buffer up the entire result
-            before sending it to the client. Won't matter for
-            smaller datasets, but larger will have an impact.
-            """
-            if self.stream: stream = srl.stream_render(request)
-            else: stream = srl.render(request)
-            
-            resp = HttpResponse(stream, mimetype=ct)
-            resp.streaming = self.stream
-            return resp
-        except HttpStatusCode, e:
-            return e.response
+        if em_format == 'html':
+            temp = get_template('fulcrum/resource_detail.html')
+            ctxt = Context({'resource': self})
+            return HttpResponse(temp.render(ctxt))
+        else:
+            emitter, ct = Emitter.get(em_format)
+            srl = emitter(result, typemapper, handler, handler.fields, anonymous)
+        
+            try:
+                """
+                Decide whether or not we want a generator here,
+                or we just want to buffer up the entire result
+                before sending it to the client. Won't matter for
+                smaller datasets, but larger will have an impact.
+                """
+                if self.stream: stream = srl.stream_render(request)
+                else: stream = srl.render(request)
+                
+                resp = HttpResponse(stream, mimetype=ct)
+                resp.streaming = self.stream
+                return resp
+            except HttpStatusCode, e:
+                return e.response
 
     @staticmethod
     def cleanup_request(request):

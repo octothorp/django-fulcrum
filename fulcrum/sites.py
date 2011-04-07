@@ -188,7 +188,7 @@ class FulcrumSite(object):
         except KeyError:
             raise http.Http404("This resource has not been registered with fulcrum.")
         
-        if format == 'html':
+        if format == 'htmlsss':
             return render_to_response('fulcrum/resource_detail.html', { 'resource': resource })
         else:
             return resource(request, emitter_format=format)
