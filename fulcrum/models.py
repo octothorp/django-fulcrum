@@ -104,6 +104,7 @@ class Consumer(models.Model):
                 #print "Mail being sent, to=%s" % rcpt
                 #print "Subject: %s" % subject
                 #print body
+                pass
 
 admin.site.register(Consumer)
 
