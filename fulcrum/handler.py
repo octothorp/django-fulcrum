@@ -172,6 +172,7 @@ class DefaultHandler(BaseHandler):
                     if field.name not in attrs.keys() or attrs[field.name] == '':
                         #print 'appending to missing_fields'
                         #missing_fields.append((field.name, type(field).__name__))
+                        pass
         
         #print 'missing_fields: {0}'.format(missing_fields)
         
@@ -191,7 +192,8 @@ class DefaultHandler(BaseHandler):
             try:
                 inst.full_clean()
             except ValidationError, e:
-                #print 'Model validation error: {0}'.format(e)  
+                #print 'Model validation error: {0}'.format(e)
+                pass
             inst.save()
             return inst
         except self.model.MultipleObjectsReturned:
