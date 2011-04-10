@@ -65,7 +65,7 @@ class Schema:
     
     def text(self, pretty=True):
         """
-        Print the schema text.
+        #print the schema text.
         
         This should be aware of self.pretty.
         """
@@ -160,7 +160,7 @@ class XSDSchema(XMLSchema):
         for field in self.model._meta.fields:
             root.appendChild(field_to_xsd(field))
         
-        self.root = root	# Prepare for printing
+        self.root = root	# Prepare for #printing
         
 
 class JSONSchema(Schema):

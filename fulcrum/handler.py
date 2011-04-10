@@ -137,13 +137,13 @@ class DefaultHandler(BaseHandler):
             return rc.NOT_IMPLEMENTED
         
         attrs = self.flatten_dict(request.POST)
-        print 'attrs {0}'.format(attrs)
+        #print 'attrs {0}'.format(attrs)
         
         missing_fields = []
         
-        print 'model fields:'
+        #print 'model fields:'
         for field in self.model._meta.fields + self.model._meta.many_to_many:
-            print '-- {0}:{1} required {2}'.format(field.name, type(field).__name__, field.blank==False)
+            #print '-- {0}:{1} required {2}'.format(field.name, type(field).__name__, field.blank==False)
             
             req = field.blank == False
             typ = type(field)
@@ -157,23 +157,23 @@ class DefaultHandler(BaseHandler):
                     f_field = self.model._meta.get_field_by_name(field.name)
                     
                     if f_field[0].rel.to == User:
-                        print 'field name: {0}'.format(field.name)
+                        #print 'field name: {0}'.format(field.name)
                         if field.name not in attrs.keys():
-                            print 'adding user...'
+                            #print 'adding user...'
                             attrs[field.name] = request.user
                         else:
-                            print 'user exists...'
+                            #print 'user exists...'
                     else:
                         # TODO: how to handle other model types?
                         pass
                         '''
                 else:
-                    print 'checking against attrs...'
+                    #print 'checking against attrs...'
                     if field.name not in attrs.keys() or attrs[field.name] == '':
-                        print 'appending to missing_fields'
+                        #print 'appending to missing_fields'
                         #missing_fields.append((field.name, type(field).__name__))
         
-        print 'missing_fields: {0}'.format(missing_fields)
+        #print 'missing_fields: {0}'.format(missing_fields)
         
         '''if len(missing_fields) > 0:
             resp = rc.BAD_REQUEST
@@ -191,7 +191,7 @@ class DefaultHandler(BaseHandler):
             try:
                 inst.full_clean()
             except ValidationError, e:
-                print 'Model validation error: {0}'.format(e)  
+                #print 'Model validation error: {0}'.format(e)  
             inst.save()
             return inst
         except self.model.MultipleObjectsReturned:

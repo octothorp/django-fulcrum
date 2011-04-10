@@ -165,7 +165,7 @@ class FulcrumSite(object):
         Renders index page view for fulcrum. Lists all registered resources.
         """
         
-        print 'index()'
+        #print 'index()'
         
         r_list = [ self.registry[key] for key in self.registry.keys() ]
         return render_to_response('fulcrum/homepage.html', { 'resource_list': r_list })
@@ -180,8 +180,8 @@ class FulcrumSite(object):
         Resource data
         """
         
-        print 'resource_data_format()'
-        print '-- user: {0}'.format(request.user)
+        #print 'resource_data_format()'
+        #print '-- user: {0}'.format(request.user)
         
         try:
             resource = self.registry[resource_name]
@@ -199,7 +199,7 @@ class FulcrumSite(object):
         Resource API handler
         """
         
-        print 'resource_api()'
+        #print 'resource_api()'
         
         try:
             resource = self.registry[resource_name]
@@ -223,7 +223,7 @@ class FulcrumSite(object):
         Resource schema handler
         """
         
-        print 'resource_schema()'
+        #print 'resource_schema()'
         
         try:
             resource = self.registry[resource_name]
@@ -238,7 +238,7 @@ class FulcrumSite(object):
         Object data
         """
         
-        print 'object_data_format()'
+        #print 'object_data_format()'
         
         try:
             resource = self.registry[resource_name]

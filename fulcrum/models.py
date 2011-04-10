@@ -101,9 +101,9 @@ class Consumer(models.Model):
                 mail_admins(subject, body, fail_silently=True)
                         
             if settings.DEBUG:
-                print "Mail being sent, to=%s" % rcpt
-                print "Subject: %s" % subject
-                print body
+                #print "Mail being sent, to=%s" % rcpt
+                #print "Subject: %s" % subject
+                #print body
 
 admin.site.register(Consumer)
 

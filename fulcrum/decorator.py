@@ -6,7 +6,7 @@ for the documentation and below for the licence.
 
 ## The basic trick is to generate the source code for the decorated function
 ## with the right signature and to evaluate it.
-## Uncomment the statement 'print >> sys.stderr, func_src'  in _decorator
+## Uncomment the statement '##print >> sys.stderr, func_src'  in _decorator
 ## to understand what is going on.
 
 __all__ = ["decorator", "new_wrapper", "getinfo"]
@@ -131,7 +131,7 @@ def decorator(caller):
 
     >>> @decorator
     ... def chatty(f, *args, **kw):
-    ...     print "Calling %r" % f.__name__
+    ...     ##print "Calling %r" % f.__name__
     ...     return f(*args, **kw)
 
     >>> chatty.__name__
@@ -155,7 +155,7 @@ def decorator(caller):
         assert not ('_call_' in argnames or '_func_' in argnames), (
             'You cannot use _call_ or _func_ as argument names!')
         src = "lambda %(signature)s: _call_(_func_, %(signature)s)" % infodict
-        # import sys; print >> sys.stderr, src # for debugging purposes
+        # import sys; ##print >> sys.stderr, src # for debugging purposes
         dec_func = eval(src, dict(_func_=func, _call_=caller))
         return update_wrapper(dec_func, func, infodict)
     return update_wrapper(_decorator, caller)
