@@ -17,7 +17,7 @@ table { margin: 0; padding: 0; width: 100%; clear: both; border-color: #ccc; bor
 th { color: #666; background-color: #fff; margin: 0; padding: 12px 12px; text-align: left; vertical-align: top; border-color: #ccc; border-width: 1px 1px 0 0; border-style: solid; }
 th.nobg { padding: 6px 12px; background-color: #eee; }
 td { margin: 0; padding: 6px 12px; text-align: left; vertical-align: top; border-color: #ccc; border-width: 1px 1px 0 0; border-style: solid; }
-.odd { background-color:#EDF3FE; }
+.odd { background-color:#fff; }
 .quiet { color:#666; }
 .arrowtitle { overflow: hidden; width: 100%; }
 .arrowtitle img { float: left; margin: 0px 10px 0px 0px; }
@@ -40,16 +40,15 @@ td { margin: 0; padding: 6px 12px; text-align: left; vertical-align: top; border
 .objectinfo th { text-align:left; white-space:nowrap; }
 /* MODEL GROUPS */
 .modelgroup { color:#999; font-size:0.9em; margin:0 -20px; }
-.modelgroup h2 { font-size:1.2em; margin:0; }
-.modelgroup h2 a { display: block; padding: 0.83em 20px; }
-.modelgroup h2 a:hover { text-decoration: none; color: #fff; }
+.modelgroup h2 { color: #ce5c34; font-weight: 500; font-size:1.2em; display: block; padding: 0.83em 20px; margin:0; }
+/*.modelgroup h2:hover { color: #fff; text-decoration: none; }*/
 .modelgroup p { float:left; margin:-2.65em 0 0 14em; position:relative; }
 .modelgroup p a { padding-right: 20px; white-space:nowrap; }
 .modelgroup a.more { color:#999; }
-.modelgroup:hover { background:#5b80b2; color:#becfe5; }
+/*.modelgroup:hover { background:#5b80b2; color:#becfe5; }
 .modelgroup:hover p a { color:#becfe5; }
 .modelgroup:hover a { color:#fff; }
-.modelgroup:hover a.more { color:#fff; }
+.modelgroup:hover a.more { color:#fff; }*/
 /* BREADCRUMBS */
 #breadcrumbs { padding:10px 0; color:#999; font-size:0.9em; float: left; }
 /* HEADER */
@@ -71,7 +70,7 @@ pre {
 {% block extrahead %}{% endblock %}
 </head>
 <body id="{% block bodyid %}page{% endblock %}">
-<div id="header"><a href="{% url fulcrum:fulcrum_index %}"><img src="/media/images/logo.png"/></a></div>
+<div id="header"><a href="{% url fulcrum:fulcrum_index %}"><img src= "/media/fulcrum/images/logo.png"/></a></div>
 <div id="content">
 {% block content %}{% endblock %}
 </div>

@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="arrowtitle">
-    <img src="/media/images/orange_arrow.png"/>
+    <img src="/media/fulcrum/images/orange_arrow.png"/>
     <h1>{{ resource.objects.count }} {% if resource.objects.count|pluralize %}{{ resource.verbose_name_plural }}{% else %}{{ resource.verbose_name }}{% endif %}</h1>
 </div>
 
@@ -15,7 +15,7 @@
     {% for object in resource.objects %}
         <li class="{% cycle 'odd' 'even' %}">
             <a href="{% url fulcrum:fulcrum_index %}{{ object.url }}">
-                {{ object }}
+                {{ object }} ( pk = {{ object.pk }} )
             </a>
         </li>
     {% endfor %}

@@ -17,7 +17,7 @@
 {% block content %}
 
 <div class="arrowtitle">
-    <img src="/media/images/orange_arrow.png"/>
+    <img src="/media/fulcrum/images/orange_arrow.png"/>
     <h1>{{ object.model.verbose_name|capfirst }}: {{ object }}</h1>
 </div>
 
@@ -32,7 +32,7 @@
     <table id="objectinfotable">
     {% for field in object.fields %}
         <tr>
-            <th>{{ field.field.name }}</th>
+            <th>{{ field.field.name }}{%if field.field.primary_key %} *{% endif %}</th>
             <td width="100%">
                 {% if field.urls %}
                     {% for value, url in field.urls %}
@@ -45,6 +45,7 @@
         </tr>
     {% endfor %}
     </table>
+    <p>* Primary key</p>
     {% for related_object in object.related_objects %}
         <div class="related">
             <h2>Appears in "{{ related_object.related_field }}" in the following {{ related_object.model.verbose_name_plural }}:</h2>

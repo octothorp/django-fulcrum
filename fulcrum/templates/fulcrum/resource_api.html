@@ -11,8 +11,8 @@
 #schemaheader h2 { margin: 0; float: left; }
 #schemaheader p { margin: 0; float: right; text-align: right; line-height: 2.35em;}
 
-#schematable td.spectrue { background: #eee url('/media/images/green_check.png') no-repeat center center; }
-#schematable td.specfalse { background: #eee url('/media/images/red_x.png') no-repeat center center; }
+#schematable td.spectrue { background: #eee url('/media/fulcrum/images/green_check.png') no-repeat center center; }
+#schematable td.specfalse { background: #eee url('/media/fulcrum/images/red_x.png') no-repeat center center; }
 
 #connection { margin: 0px 0px 30px 0px; }
 #response { margin: 0px 0px 30px 0px; }
@@ -25,7 +25,7 @@
 {% block content %}
 
 <div class="arrowtitle">
-    <img src="/media/images/orange_arrow.png"/>
+    <img src="/media/fulcrum/images/orange_arrow.png"/>
     <h1>{{ resource.verbose_name|capfirst }}</h1>
 </div>
 
@@ -35,10 +35,10 @@
     </div>
     <table id="methodstable">
         <tr>
-            <td width="25%">GET{% if 'GET' in resource.get_allowed_methods %}<img src="/media/images/green_check.png">{% else %}<img src="/media/images/red_x.png"/>{% endif %}</td>
-            <td width="25%">POST{% if 'POST' in resource.get_allowed_methods %}<img src="/media/images/green_check.png">{% else %}<img src="/media/images/red_x.png"/>{% endif %}</td>
-            <td width="25%">PUT{% if 'PUT' in resource.get_allowed_methods %}<img src="/media/images/green_check.png">{% else %}<img src="/media/images/red_x.png"/>{% endif %}</td>
-            <td width="25%">DELETE{% if 'DELETE' in resource.get_allowed_methods %}<img src="/media/images/green_check.png">{% else %}<img src="/media/images/red_x.png"/>{% endif %}</td>
+            <td width="25%">GET{% if 'GET' in resource.get_allowed_methods %}<img src="/media/fulcrum/images/green_check.png">{% else %}<img src="/media/fulcrum/images/red_x.png"/>{% endif %}</td>
+            <td width="25%">POST{% if 'POST' in resource.get_allowed_methods %}<img src="/media/fulcrum/images/green_check.png">{% else %}<img src="/media/fulcrum/images/red_x.png"/>{% endif %}</td>
+            <td width="25%">PUT{% if 'PUT' in resource.get_allowed_methods %}<img src="/media/fulcrum/images/green_check.png">{% else %}<img src="/media/fulcrum/images/red_x.png"/>{% endif %}</td>
+            <td width="25%">DELETE{% if 'DELETE' in resource.get_allowed_methods %}<img src="/media/fulcrum/images/green_check.png">{% else %}<img src="/media/fulcrum/images/red_x.png"/>{% endif %}</td>
         </tr>
     </table>
 </div>
@@ -64,7 +64,7 @@
         </tr>
         {% for field in resource.fields %}
             <tr>
-                <th class="nobg">{{ field.name }}</th>
+                <th class="nobg">{{ field.name }}{%if field.field.primary_key %} *{% endif %}</th>
                 <!--<td>{{ field.type }}</td>-->
                 <td>
                     {% for value, url in field.type %}
@@ -87,6 +87,7 @@
             </tr>
         {% endfor %}
     </table>
+    <p>* Primary key</p>
 </div>
 
 <div id="connection">
