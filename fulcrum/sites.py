@@ -6,6 +6,7 @@ from django.utils.functional import update_wrapper
 from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.cache import never_cache
+from django.template import RequestContext
 from fulcrum.datastructures import EasyModel
 from fulcrum.authentication import NoAuthentication
 from fulcrum.handler import DefaultHandler, DefaultAnonymousHandler
@@ -200,16 +201,15 @@ class FulcrumSite(object):
         except KeyError:
             raise http.Http404("This resource has not been registered with fulcrum.")
         
-        schema_urls = resource.schema_urls()
-        request_example = resource.get_request_example('json')
-        response_example = resource.get_response_example('json')
         
-        return render_to_response('fulcrum/resource_api.html', {
-                'resource': resource,
-                'schema_urls': schema_urls,
-                'request_example': request_example,
-                'response_example': response_example,
-            })
+        protocol = request.META['SERVER_PROTOCOL'].split('/')[0].lower()
+        host = request.META['HTTP_HOST']
+        path_info = request.META['PATH_INFO'].lstrip('/').rstrip('/api')
+        example_uri = '{0}://{1}/{2}/pk'.format(protocol, host, path_info)
+        
+        return render_to_response('fulcrum/resource_api.html',
+                                  { 'resource': resource, 'example_uri': example_uri },
+                                  context_instance=RequestContext(request))
     
         
     def resource_schema(self, request, resource_name, format, *args, **kwargs):

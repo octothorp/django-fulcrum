@@ -25,6 +25,7 @@ from django.utils.safestring import mark_safe
 from django.contrib.contenttypes.models import ContentType
 from django.template.loader import get_template
 from django.template import Context, RequestContext
+from django.contrib.sites.models import Site
 
 from datastructures import EasyModel
 import schemas
