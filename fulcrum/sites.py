@@ -184,7 +184,10 @@ class FulcrumSite(object):
         try:
             resource = self.registry[resource_name]
         except KeyError:
-            raise http.Http404("This resource has not been registered with fulcrum.")
+            error_msg = "Sorry, but no resource with the name <span class='loud'>{0}</span> has been registered with Fulcrum.".format(resource_name)
+            return render_to_response('fulcrum/404_fulcrum.html',
+                                      { 'error_msg': error_msg },
+                                      context_instance=RequestContext(request))
         
         return resource(request, emitter_format=format)
     
@@ -199,7 +202,10 @@ class FulcrumSite(object):
         try:
             resource = self.registry[resource_name]
         except KeyError:
-            raise http.Http404("This resource has not been registered with fulcrum.")
+            error_msg = "Sorry, but no resource with the name <span class='loud'>{0}</span> has been registered with Fulcrum.".format(resource_name)
+            return render_to_response('fulcrum/404_fulcrum.html',
+                                      { 'error_msg': error_msg },
+                                      context_instance=RequestContext(request))
         
         
         protocol = request.META['SERVER_PROTOCOL'].split('/')[0].lower()
@@ -222,7 +228,11 @@ class FulcrumSite(object):
         try:
             resource = self.registry[resource_name]
         except KeyError:
-            raise http.Http404("This resource has not been registered with fulcrum.")
+            error_msg = "Sorry, but no resource with the name <span class='loud'>{0}</span> has been registered with Fulcrum.".format(resource_name)
+            return render_to_response('fulcrum/404_fulcrum.html',
+                                      { 'error_msg': error_msg },
+                                      context_instance=RequestContext(request))
+            #raise http.Http404("This resource has not been registered with fulcrum.")
         
         return resource.get_schema_view(format)
         
@@ -237,14 +247,22 @@ class FulcrumSite(object):
         try:
             resource = self.registry[resource_name]
         except KeyError:
-            raise http.Http404("This resource has not been registered with fulcrum.")
+            error_msg = "Sorry, but no resource with the name <span class='loud'>{0}</span> has been registered with Fulcrum.".format(resource_name)
+            return render_to_response('fulcrum/404_fulcrum.html',
+                                      { 'error_msg': error_msg },
+                                      context_instance=RequestContext(request))
         
         if format == 'html':
             try:
                 object = resource.object_by_pk(primary_key)
             except:
-                return http.HttpResponse('No object with primary key {0} could be found.'.format(primary_key))
-            return render_to_response('fulcrum/object_detail.html', { 'object': object })
+                error_msg = "Sorry, but Fulcrum can't find an object with a primary key of <span class='loud'>{0}</span>.".format(primary_key)
+                return render_to_response('fulcrum/404_fulcrum.html',
+                                          { 'error_msg': error_msg },
+                                          context_instance=RequestContext(request))
+            return render_to_response('fulcrum/object_detail.html',
+                                      { 'object': object },
+                                      context_instance=RequestContext(request))
         else:
             return resource(request, pk=primary_key, emitter_format=format)
             
