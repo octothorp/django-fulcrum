@@ -10,7 +10,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from fulcrum import forms
+from fulcrum import forms, log
 
 class NoAuthentication(object):
     """
@@ -225,7 +225,7 @@ class OAuthAuthentication(object):
             try:
                 consumer, token, parameters = self.validate_token(request)
             except oauth.OAuthError, err:
-                ##print send_oauth_error(err)
+                log.error('oauth.OAuthError: %s', send_oauth_error(err))
                 return False
 
             if consumer and token:

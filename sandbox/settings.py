@@ -1,7 +1,8 @@
 import sys, os
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+TEMPLATE_DEBUG = DEBUG   
+
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),

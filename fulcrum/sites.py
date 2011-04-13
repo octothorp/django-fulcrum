@@ -10,6 +10,7 @@ from fulcrum.datastructures import EasyModel
 from fulcrum.authentication import NoAuthentication
 from fulcrum.handler import DefaultHandler, DefaultAnonymousHandler
 from fulcrum.resource import Resource
+from fulcrum import log
 from exceptions import Exception, KeyError
 
 
@@ -118,37 +119,34 @@ class FulcrumSite(object):
         urlpatterns = patterns('',
             url(r'^$', # root
                 wrap(self.index),
-                #self.index,
                 name='fulcrum_index'),
             
-            url(r'^(?P<resource_name>\w+)/$', # ex: resource_name
+            url(r'^(?P<resource_name>\w+)$', # ex: resource_name
                 wrap(self.resource_data_format),
-                #self.resource_data_format,
+                name='fulcrum_resource_data_format'),
+            
+            url(r'^(?P<resource_name>\w+)/$', # ex: resource_name/
+                wrap(self.resource_data_format),
                 name='fulcrum_resource_data_format'),
             
             url(r'^(?P<resource_name>\w+)\.(?P<format>\w+)$', # ex: resource_name.json
                 wrap(self.resource_data_format),
-                #self.resource_data_format,
                 name='fulcrum_resource_data_format'),
             
-            url(r'^(?P<resource_name>\w+)/api/$', # ex: resource_name/api
+            url(r'^(?P<resource_name>\w+)/api$', # ex: resource_name/api
                 wrap(self.resource_api),
-                #self.resource_api,
                 name='fulcrum_resource_api'),
             
             url(r'^(?P<resource_name>\w+)/schema\.(?P<format>\w+)$', # ex: resource_name/schema.json
                 wrap(self.resource_schema),
-                #self.resource_schema,
                 name='fulcrum_resource_schema'),
             
-            url(r'^(?P<resource_name>\w+)/(?P<primary_key>\w+)/$', # ex: resource_name/1
+            url(r'^(?P<resource_name>\w+)/(?P<primary_key>\w+)$', # ex: resource_name/1
                 wrap(self.object_data_format),
-                #self.object_data_format,
                 name='fulcrum_object_data_format'),
             
             url(r'^(?P<resource_name>\w+)/(?P<primary_key>\w+)\.(?P<format>\w+)$', # ex: resource_name/1.json
                 wrap(self.object_data_format),
-                #self.object_data_format,
                 name='fulcrum_object_data_format'),
         )
         
@@ -165,7 +163,7 @@ class FulcrumSite(object):
         Renders index page view for fulcrum. Lists all registered resources.
         """
         
-        #print 'index()'
+        log.debug('index()')
         
         r_list = [ self.registry[key] for key in self.registry.keys() ]
         return render_to_response('fulcrum/homepage.html', { 'resource_list': r_list })
@@ -180,18 +178,14 @@ class FulcrumSite(object):
         Resource data
         """
         
-        #print 'resource_data_format()'
-        #print '-- user: {0}'.format(request.user)
+        log.debug('resource_data_format(): {0}'.format(format))
         
         try:
             resource = self.registry[resource_name]
         except KeyError:
             raise http.Http404("This resource has not been registered with fulcrum.")
         
-        if format == 'htmlsss':
-            return render_to_response('fulcrum/resource_detail.html', { 'resource': resource })
-        else:
-            return resource(request, emitter_format=format)
+        return resource(request, emitter_format=format)
     
     
     def resource_api(self, request, resource_name, *args, **kwargs):
@@ -199,7 +193,7 @@ class FulcrumSite(object):
         Resource API handler
         """
         
-        #print 'resource_api()'
+        log.debug('resource_api()')
         
         try:
             resource = self.registry[resource_name]
@@ -223,7 +217,7 @@ class FulcrumSite(object):
         Resource schema handler
         """
         
-        #print 'resource_schema()'
+        log.debug('resource_schema()')
         
         try:
             resource = self.registry[resource_name]
@@ -238,7 +232,7 @@ class FulcrumSite(object):
         Object data
         """
         
-        #print 'object_data_format()'
+        log.debug('object_data_format()')
         
         try:
             resource = self.registry[resource_name]

@@ -245,11 +245,11 @@ class Resource(object):
         
     # -- Helper methods
     
-    def data_url(self): # resource_name/
-        return mark_safe('{0}/'.format(self.name))
+    def data_url(self): # resource_name
+        return mark_safe('{0}'.format(self.name))
     
     def api_url(self): # resource_name/api/
-        return mark_safe('{0}/api/'.format(self.name))
+        return mark_safe('{0}/api'.format(self.name))
         
     def schema_urls(self): # resource_name/schema.json
         schema_urls = {}

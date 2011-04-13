@@ -7,6 +7,7 @@ from django.core.mail import send_mail, mail_admins
 from django.template import loader
 
 from managers import TokenManager, ConsumerManager, ResourceManager
+import log
 
 KEY_SIZE = 18
 SECRET_SIZE = 32
@@ -101,9 +102,9 @@ class Consumer(models.Model):
                 mail_admins(subject, body, fail_silently=True)
                         
             if settings.DEBUG:
-                #print "Mail being sent, to=%s" % rcpt
-                #print "Subject: %s" % subject
-                #print body
+                #log.debug("Mail being sent, to=%s" % rcpt)
+                #log.debug("Subject: %s" % subject)
+                #log.debug(body)
                 pass
 
 admin.site.register(Consumer)
