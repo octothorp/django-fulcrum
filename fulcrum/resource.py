@@ -83,6 +83,12 @@ class Resource(object):
 
         return em
     
+    def get_recurse_level(self, request):
+        recurse = int(request.GET.get('recurse', 0))
+        if recurse in [0, 1]:
+            return recurse
+        return 0
+    
     @vary_on_headers('Authorization')
     def __call__(self, request, *args, **kwargs):
         """
@@ -130,12 +136,17 @@ class Resource(object):
 
         kwargs.pop('emitter_format', None)
         
+        # Get recursion level
+        recurse_level = self.get_recurse_level(request)
+        
         # Clean up the request object a bit, since we might
         # very well have `oauth_`-headers in there, and we
         # don't want to pass these along to the handler.
         request = self.cleanup_request(request)
                 
         try:
+            # result is either a single object or a list of objects
+            # something like... [<Blogpost: Sample test post 2>]
             result = meth(request, *args, **kwargs)
         except FormValidationError, e:
             # TODO: Use rc.BAD_REQUEST here
@@ -193,7 +204,7 @@ class Resource(object):
             return HttpResponse(temp.render(ctxt))
         else:
             emitter, ct = Emitter.get(em_format)
-            srl = emitter(result, typemapper, handler, handler.fields, anonymous)
+            srl = emitter(result, recurse_level, typemapper, handler, handler.fields, anonymous)
         
             try:
                 """

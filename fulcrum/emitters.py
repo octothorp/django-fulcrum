@@ -1,6 +1,6 @@
 from __future__ import generators
 
-import decimal, re, inspect
+import decimal, re, inspect, log
 
 try:
     # yaml isn't standard with python.  It shouldn't be required if it
@@ -50,9 +50,10 @@ class Emitter(object):
     """
     EMITTERS = { }
 
-    def __init__(self, payload, typemapper, handler, fields=(), anonymous=True):
+    def __init__(self, payload, recurse_level, typemapper, handler, fields=(), anonymous=True):
         self.typemapper = typemapper
         self.data = payload
+        self.recurse_level = recurse_level
         self.handler = handler
         self.fields = fields
         self.anonymous = anonymous
@@ -96,6 +97,8 @@ class Emitter(object):
             elif isinstance(thing, decimal.Decimal):
                 ret = str(thing)
             elif isinstance(thing, Model):
+                log.debug('-----------------')
+                log.debug('Model: {0}'.format(thing))
                 ret = _model(thing, fields=fields)
             elif isinstance(thing, HttpResponse):
                 raise HttpStatusCode(thing)
@@ -107,6 +110,7 @@ class Emitter(object):
                 if inspect.ismethod(f) and len(inspect.getargspec(f)[0]) == 1:
                     ret = _any(f())
             else:
+                #log.debug('smart unicode')
                 ret = smart_unicode(thing, strings_only=True)
 
             return ret
@@ -115,7 +119,10 @@ class Emitter(object):
             """
             Foreign keys.
             """
-            return _any(getattr(data, field.name))
+            if self.recurse_level == 0:
+                return getattr(data, field.name).pk
+            else:
+                return _any(getattr(data, field.name))
         
         def _related(data, fields=()):
             """
@@ -138,14 +145,19 @@ class Emitter(object):
             handler = self.in_typemapper(type(data), self.anonymous)
             get_absolute_uri = False
             
+            log.debug('_model data: {0}'.format(data))
+            
             if handler or fields:
                 v = lambda f: getattr(data, f.attname)
-
+                
                 if not fields:
                     """
                     Fields was not specified, try to find teh correct
                     version in the typemapper we were sent.
                     """
+                    
+                    log.debug('-- no fields...')
+                    
                     mapped = self.in_typemapper(type(data), self.anonymous)
                     get_fields = set(mapped.fields)
                     exclude_fields = set(mapped.exclude).difference(get_fields)
@@ -173,6 +185,7 @@ class Emitter(object):
                 met_fields = self.method_fields(handler, get_fields)
 
                 for f in data._meta.local_fields:
+                    log.debug('-- f is primary_key: {0}'.format(f.primary_key))
                     if f.serialize and not any([ p in met_fields for p in [ f.attname, f.name ]]):
                         if not f.rel:
                             if f.attname in get_fields:
@@ -184,6 +197,7 @@ class Emitter(object):
                                 get_fields.remove(f.name)
                 
                 for mf in data._meta.many_to_many:
+                    log.debug('-- mf is primary_key: {0}'.format(mf.primary_key))
                     if mf.serialize and mf.attname not in met_fields:
                         if mf.attname in get_fields:
                             ret[mf.name] = _m2m(data, mf)
@@ -191,7 +205,7 @@ class Emitter(object):
                 
                 # try to get the remainder of fields
                 for maybe_field in get_fields:
-                    
+                    log.debug('-- maybe_field is primary_key: {0}'.format(maybe_field))
                     if isinstance(maybe_field, (list, tuple)):
                         model, fields = maybe_field
                         inst = getattr(data, model, None)
