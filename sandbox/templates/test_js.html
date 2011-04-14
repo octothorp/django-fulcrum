@@ -11,7 +11,8 @@
 
 <script type="text/javascript">
 // Basic 64 of user password
-var auth = "Basic dGVzdHVzZXI6Zm9vYmFy";
+//var auth = "Basic dGVzdHVzZXI6Zm9vYmFy";
+var auth = "Basic b2ttOnJlZDEyMw==";
 
 function success_callback() {
 	$("<h3>").text(this.title).appendTo("#content");
@@ -20,10 +21,10 @@ function success_callback() {
 	$("<div>").text(this.content).appendTo("#content");
 	$("<h4>").text(this.created_on).appendTo("#content");
 };
-
+//url: "srv/blogpost.json",
 $(function() {
 	var dict = {
-		url: "srv/blogpost.json",
+        url: "srv/blogpost.json?recurse=1",
 		beforeSend: function(request) {
 			request.setRequestHeader('Authorization', auth);
 		},
@@ -33,10 +34,10 @@ $(function() {
 		
 	$.ajax(dict);
 });
-
+//url: "/srv/blogpost.json",
 function send_form() {
 	send_dict = {
-		url: "/srv/blogpost.json",
+        url: "/srv/blogpost.json",
 		beforeSend: function(request) {
 				request.setRequestHeader('Authorization', auth);
 		},
@@ -77,6 +78,14 @@ function send_form() {
 		<br />
         <label for="id_gender">Gender:</label>
 		<input type="text" id="id_gender" name="gender" />
+		<br />
+        <label for="id_tags">Tags:</label>
+        <select id="id_tags" name="tags" multiple="true">
+            <option selected="selected" value="1">Dogs</option>
+            <option selected="selected" value="2">Humans</option>
+            <option selected="selected" value="3">NotThere</option>
+        </select>
+		<!--<input type="text" id="id_tags" name="tags" />-->
 		<br />
         <label for="id_author">Author:</label>
 		<input type="text" id="id_author" name="author" />

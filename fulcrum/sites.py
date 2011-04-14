@@ -10,7 +10,7 @@ from django.template import RequestContext
 from fulcrum.datastructures import EasyModel
 from fulcrum.authentication import NoAuthentication
 from fulcrum.handler import DefaultHandler, DefaultAnonymousHandler
-from fulcrum.resource import Resource
+from fulcrum.resource import ArbitraryResource, Resource
 from fulcrum import log
 from exceptions import Exception, KeyError
 
@@ -32,6 +32,7 @@ class FulcrumSite(object):
         self.app_name = app_name
         self.registry = {}
         self.authentication = authentication or NoAuthentication() # default authentication for all resources
+        self.group = 'Resources'
     
     
     def has_permission(self, request):
@@ -43,7 +44,7 @@ class FulcrumSite(object):
         return True
     
     
-    def register(self, model, handler_class=None, name=None, authentication=None, **options):
+    def register(self, model, handler_class=None, name=None, authentication=None, group=None, **options):
         """
         Register a resource.
         """
@@ -55,10 +56,23 @@ class FulcrumSite(object):
             else:
                 handler = DefaultAnonymousHandler(model)
         authentication = authentication or self.authentication
-        resource = Resource(handler, self, name, authentication)
+        group = group or self.group
+        resource = Resource(handler, self, name, authentication, group)
         
         if resource.name in self.registry:
             raise AlreadyRegistered('The resource {0} is already registered'.format(resource.name))
+        self.registry[resource.name] = resource
+    
+    
+    def register_arbitrary(self, handler_class, name, authentication=None, group=None, **options):
+        """
+        Register an aribitrary resource not tied to a model.
+        """
+        authentication = authentication or self.authentication
+        group = group or self.group
+        resource = ArbitraryResource(handler_class(), self, name, authentication, group)
+        if resource.name in self.registry:
+            raise AlreadyRegistered('The arbitrary resource {0} is already registered'.format(resource.name))
         self.registry[resource.name] = resource
     
         
@@ -80,6 +94,7 @@ class FulcrumSite(object):
         Get a resource by model.
         """
         for k, v in self.registry.items():
+            if v.arbitrary: continue
             if model == v.model:
                 return v
         return None
@@ -167,7 +182,21 @@ class FulcrumSite(object):
         log.debug('index()')
         
         r_list = [ self.registry[key] for key in self.registry.keys() ]
-        return render_to_response('fulcrum/homepage.html', { 'resource_list': r_list })
+        
+        groups = {}
+        for r in [ self.registry[key] for key in self.registry.keys() ]:
+            if not r.group in groups:
+                groups[r.group] = [] 
+            groups[r.group].append(r)
+        
+        #sgroups = sorted(groups.items())
+        #log.debug('sorted groups: {0}'.format(sgroups))
+        
+        #log.debug('-- groups: {0}'.format(groups))
+        
+        return render_to_response('fulcrum/homepage.html',
+                                  { 'resource_list': groups },
+                                  context_instance=RequestContext(request))
         
     
     def login(self, request):

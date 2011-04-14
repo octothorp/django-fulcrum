@@ -6,10 +6,17 @@ GENDER_CHOICES = (
     ('F', 'Female'),
 )
 
+class Tags(models.Model):
+    name = models.CharField(max_length=255)
+    
+    def __unicode__(self):
+        return self.name
+
 class Blogpost(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
-    author = models.ForeignKey(User, related_name='posts')
+    author = models.ForeignKey(User, related_name='author_posts')
+    tags = models.ManyToManyField(Tags, related_name='tag_posts')
     created_on = models.DateTimeField(auto_now_add=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     

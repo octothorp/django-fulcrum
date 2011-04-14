@@ -10,6 +10,7 @@ from django.utils.encoding import smart_unicode, smart_str, iri_to_uri
 from django.utils.safestring import mark_safe
 from django.db.models.query import QuerySet
 from django.db.models import CharField, ForeignKey, ManyToManyField
+from fulcrum import log
 
 EMPTY_VALUE = '(None)'
 DISPLAY_SIZE = 100

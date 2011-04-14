@@ -41,7 +41,7 @@ class Resource(object):
     callmap = { 'GET': 'read', 'POST': 'create', 
                 'PUT': 'update', 'DELETE': 'delete' }
     
-    def __init__(self, handler, site, name=None, authentication=None):
+    def __init__(self, handler, site, name=None, authentication=None, group=None):
         #if not callable(handler):
         #    raise AttributeError, "Handler not callable."
         
@@ -49,6 +49,7 @@ class Resource(object):
         self.site = site
         self.model = self.handler.model
         self.easymodel = EasyModel(self, self.model)
+        self.group = group
         
         if name:
             self.name = name.lower()
@@ -60,7 +61,7 @@ class Resource(object):
             self.verbose_name_plural = self.model._meta.verbose_name_plural
         
         self.authentication = authentication
-            
+        self.arbitrary = False
         # Erroring
         self.email_errors = getattr(settings, 'PISTON_EMAIL_ERRORS', True)
         self.display_errors = getattr(settings, 'PISTON_DISPLAY_ERRORS', True)
@@ -299,4 +300,31 @@ class Resource(object):
 
     def fields(self):
         return self.easymodel.fields()
+
+class ArbitraryResource(Resource):
+    
+    #callmap = { 'GET': 'read', 'POST': 'create', 
+    #            'PUT': 'update', 'DELETE': 'delete' }
+    
+    def __init__(self, handler, site, name=None, authentication=None, group=None):
+        self.handler = handler
+        self.site = site
+        self.name = name.lower()
+        self.verbose_name = get_verbose_name(self.name)
+        self.verbose_name_plural = string_concat(self.verbose_name, 's')
+        self.authentication = authentication
+        self.arbitrary = True
+        self.group = group
+        
+        # Erroring
+        self.email_errors = getattr(settings, 'PISTON_EMAIL_ERRORS', True)
+        self.display_errors = getattr(settings, 'PISTON_DISPLAY_ERRORS', True)
+        self.stream = getattr(settings, 'PISTON_STREAM_OUTPUT', False)
+    
+    def get_schema(self, schema):
+        return '#'
+    
+    def get_schema_view(self, schema):
+        return '#'
+        
         

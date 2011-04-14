@@ -11,11 +11,20 @@
     <h1>Resources</h1>
 </div>
     
-	{% for resource in resource_list %}
+	<!--{% for resource in resource_list %}
 		<div class="modelgroup {% cycle 'even' 'odd' %}">
-			<!--<h2><a href="">{{ resource.verbose_name|capfirst }}</a></h2>-->
             <h2>{{ resource.verbose_name|capfirst }}</h2>
 			<p><a href="{{ resource.api_url }}">API</a><a href="{{ resource.data_url }}">Data</a></p>
 		</div>
+	{% endfor %}-->
+    {% for group, r_list in resource_list.items %}
+        
+        <h2>{{ group }}</h2>
+        {% for resource in r_list %}
+		<div class="modelgroup {% cycle 'even' 'odd' %}">
+            <h2>{{ resource.verbose_name|capfirst }}</h2>
+			<p><a href="{{ resource.api_url }}">API</a><a href="{{ resource.data_url }}">Data</a></p>
+		</div>
+        {% endfor %}
 	{% endfor %}
 {% endblock %}

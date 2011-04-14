@@ -1,7 +1,8 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.contrib.auth.models import User, Permission, Group
-from blog.models import Blogpost
+from blog.models import Blogpost, Tags
+from blog.handlers import CustomHandler
 import sandbox
 import fulcrum
 
@@ -19,7 +20,9 @@ if sandbox.settings.DEBUG:
     )
 
 auth = fulcrum.authentication.HttpBasicAuthentication(realm="My realm")
-fulcrum.site.register(Blogpost, authentication=auth)
+fulcrum.site.register(Blogpost, authentication=auth, group="My Group")
+fulcrum.site.register(Tags, authentication=auth, group="My Group")
 fulcrum.site.register(User, authentication=auth)
-#fulcrum.site.register(Permission, authentication=auth)
-#fulcrum.site.register(Group, authentication=auth)
+fulcrum.site.register_arbitrary(CustomHandler, 'CustomArbitraryResource', authentication=auth, group="Arbitrary Resources")
+fulcrum.site.register(Permission, authentication=auth)
+fulcrum.site.register(Group, authentication=auth)

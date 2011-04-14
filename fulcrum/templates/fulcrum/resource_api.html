@@ -42,7 +42,7 @@
         </tr>
     </table>
 </div>
-
+{% if not resource.arbitrary %}
 <div id="schema">
     <div id="schemaheader">
         <h2>Schema</h2>
@@ -89,7 +89,7 @@
     </table>
     <p>* Primary key</p>
 </div>
-
+{% endif %}
 <div id="connection">
     <div id="connectionheader">
         <h2>URI</h2>
