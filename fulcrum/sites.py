@@ -211,7 +211,7 @@ class FulcrumSite(object):
         protocol = request.META['SERVER_PROTOCOL'].split('/')[0].lower()
         host = request.META['HTTP_HOST']
         path_info = request.META['PATH_INFO'].lstrip('/').rstrip('/api')
-        example_uri = '{0}://{1}/{2}/pk'.format(protocol, host, path_info)
+        example_uri = '{0}://{1}/{2}'.format(protocol, host, path_info)
         
         return render_to_response('fulcrum/resource_api.html',
                                   { 'resource': resource, 'example_uri': example_uri },

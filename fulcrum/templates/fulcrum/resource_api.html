@@ -92,11 +92,17 @@
 
 <div id="connection">
     <div id="connectionheader">
-        <h2>Example URI</h2>
+        <h2>URI</h2>
     </div>
     
     <div class="example">
-        <pre>{{ example_uri }}</pre>
+        <p>All entries:</p>
+        <pre>{{ example_uri }}.<i>format</i>?recurse=0</pre>
+        <p>A single entry:</p>
+        <pre>{{ example_uri }}/pk.<i>format</i>?recurse=0</pre>
+        <p>The <i>recurse</i> query string is optional (default value is 0) and indicates how related fields
+        are handled. A value of 0 will return only a primary key and a value of 1
+        will return the entire object.</p>
     </div>
 </div>
 

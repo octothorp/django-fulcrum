@@ -2,8 +2,7 @@ from utils import rc
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned, ValidationError
 from django.db.models import ForeignKey, ManyToManyField
 from django.contrib.auth.models import User
-
-from sandbox.blog.models import Blogpost
+from django.http import HttpResponse
 from fulcrum import log, schemas
 
 typemapper = { }
@@ -132,57 +131,43 @@ class DefaultHandler(BaseHandler):
         
     
     def create(self, request, *args, **kwargs):
+        """
+        Default create implementation. Will only validate if all required fields are supplied.
+        Related object fields require a primary_key to an object or list of objects that already
+        exist in the database.
+        """
+        log.debug('create()')
         
         if not self.has_model():
             return rc.NOT_IMPLEMENTED
         
         attrs = self.flatten_dict(request.POST)
-        log.debug('attrs {0}'.format(attrs))
         
-        missing_fields = []
+        for f in self.model._meta.local_fields:
+            required = f.blank == False
+            if required and f.name in attrs:
+                
+                if type(f) == ForeignKey:
+                    log.debug('ForeignKey field...')
+                    try:
+                        obj = f.rel.to.objects.get(pk=attrs[f.name])
+                        attrs[f.name] = obj
+                    except ObjectDoesNotExist, e:
+                        error_msg = 'ObjectDoesNotExist: {0}'.format(e)
+                        log.debug(error_msg)
+                        return HttpResponse(error_msg)
+                elif type(f) == ManyToManyField:
+                    log.debug('ManyToMany field...')
+                    try:
+                        objs = f.rel.to.objects.filter(pk=attrs[f.name])
+                        attrs[f.name] = objs
+                        # TODO: figure out how to set manytomany on a new model
+                    except ObjectDoesNotExist, e:
+                        error_msg = 'ObjectDoesNotExist: {0}'.format(e)
+                        log.debug(error_msg)
+                        return HttpResponse(error_msg)
         
-        log.debug('model fields:')
-        for field in self.model._meta.fields + self.model._meta.many_to_many:
-            log.debug('-- {0}:{1} required {2}'.format(field.name, type(field).__name__, field.blank==False))
-            
-            req = field.blank == False
-            typ = type(field)
-            
-            if req:
-                if type(field) == ForeignKey or type(field) == ManyToManyField:
-                    
-                    # TODO: get the object and set it explicitly
-                    
-                    '''
-                    f_field = self.model._meta.get_field_by_name(field.name)
-                    
-                    if f_field[0].rel.to == User:
-                        #log.debug('field name: {0}'.format(field.name))
-                        if field.name not in attrs.keys():
-                            #log.debug('adding user...')
-                            attrs[field.name] = request.user
-                        else:
-                            #log.debug('user exists...')
-                    else:
-                        # TODO: how to handle other model types?
-                        pass
-                        '''
-                else:
-                    log.debug('checking against attrs...')
-                    if field.name not in attrs.keys() or attrs[field.name] == '':
-                        #log.debug('appending to missing_fields')
-                        #missing_fields.append((field.name, type(field).__name__))
-                        pass
-        
-        #log.debug('missing_fields: {0}'.format(missing_fields))
-        
-        '''if len(missing_fields) > 0:
-            resp = rc.BAD_REQUEST
-            resp.write('\nThe following fields are required:')
-            for field, typ in missing_fields:
-                resp.write('\n-- {0}:{1}'.format(field, typ))
-            return resp
-        '''
+        log.debug('POST attrs" {0}'.format(attrs))
         
         try:
             inst = self.model.objects.get(**attrs)
@@ -192,8 +177,9 @@ class DefaultHandler(BaseHandler):
             try:
                 inst.full_clean()
             except ValidationError, e:
-                log.debug('Model validation error: {0}'.format(e))
-                pass
+                error_msg = str(e)
+                log.debug(error_msg)
+                return HttpResponse(error_msg)
             inst.save()
             return inst
         except self.model.MultipleObjectsReturned:
