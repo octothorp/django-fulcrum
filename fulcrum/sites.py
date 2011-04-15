@@ -181,21 +181,10 @@ class FulcrumSite(object):
         
         log.debug('index()')
         
-        r_list = [ self.registry[key] for key in self.registry.keys() ]
-        
-        groups = {}
-        for r in [ self.registry[key] for key in self.registry.keys() ]:
-            if not r.group in groups:
-                groups[r.group] = [] 
-            groups[r.group].append(r)
-        
-        #sgroups = sorted(groups.items())
-        #log.debug('sorted groups: {0}'.format(sgroups))
-        
-        #log.debug('-- groups: {0}'.format(groups))
+        r_list = [{'group': resource.group, 'resource': resource } for resource in self.registry.values()]
         
         return render_to_response('fulcrum/homepage.html',
-                                  { 'resource_list': groups },
+                                  { 'resource_list': r_list },
                                   context_instance=RequestContext(request))
         
     

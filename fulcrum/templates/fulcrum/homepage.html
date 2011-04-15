@@ -11,22 +11,17 @@
     <h1>Resources</h1>
 </div>
     
-	<!--{% for resource in resource_list %}
+    {% regroup resource_list|dictsort:'group' by group as group_list %}
+    {% for group in group_list %}
+        <h2>{{ group.grouper }}</h2>
+        {% for resource in group.list %}
 		<div class="modelgroup {% cycle 'even' 'odd' %}">
-            <h2>{{ resource.verbose_name|capfirst }}</h2>
-			<p><a href="{{ resource.api_url }}">API</a><a href="{{ resource.data_url }}">Data</a></p>
-		</div>
-	{% endfor %}-->
-    {% for group, r_list in resource_list.items %}
-        
-        <h2>{{ group }}</h2>
-        {% for resource in r_list %}
-		<div class="modelgroup {% cycle 'even' 'odd' %}">
-            <a href="{{ resource.data_url }}">
-                <h2>{{ resource.verbose_name|capfirst }}</h2>
-                <p><a href="{{ resource.api_url }}">API</a><a href="{{ resource.data_url }}">Data</a></p>
+            <a href="{{ resource.resource.data_url }}">
+                <h2>{{ resource.resource.verbose_name|capfirst }}</h2>
+                <p><a href="{{ resource.resource.api_url }}">API</a><a href="{{ resource.resource.data_url }}">Data</a></p>
             </a>
 		</div>
         {% endfor %}
 	{% endfor %}
+    
 {% endblock %}
