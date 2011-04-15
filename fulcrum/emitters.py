@@ -118,7 +118,9 @@ class Emitter(object):
             Foreign keys.
             """
             if self.recurse_level == 0:
-                return getattr(data, field.name).pk
+                attr = getattr(data, field.name)
+                if attr: return attr.pk
+                else: return 'None'
             else:
                 return _any(getattr(data, field.name))
         
