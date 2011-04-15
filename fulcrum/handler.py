@@ -141,16 +141,16 @@ class DefaultHandler(BaseHandler):
         if not self.has_model():
             return rc.NOT_IMPLEMENTED
         
-        log.debug('request.POST" {0}'.format(request.POST))
+        #log.debug('request.POST: %s' % request.POST)
         #dct = request.POST
         #attrs = dict([ (str(k), dct.getlist(k)) for k in dct.keys() ])
         attrs = self.flatten_dict(request.POST)
-        log.debug('PRE attrs" {0}'.format(attrs))
+        #log.debug('PRE attrs" {0}'.format(attrs))
         for k in attrs.keys():
             if len(attrs[k]) == 1:
                 attrs[k] = attrs[k][0]
         
-        log.debug('PRE PRE attrs" {0}'.format(attrs))
+        #log.debug('PRE PRE attrs" {0}'.format(attrs))
         
         m2mobjs = {}
         for f in self.model._meta.local_fields + self.model._meta.many_to_many:
@@ -164,32 +164,32 @@ class DefaultHandler(BaseHandler):
                         obj = f.rel.to.objects.get(pk=attrs[f.name])
                         attrs[f.name] = obj
                     except ObjectDoesNotExist, e:
-                        error_msg = 'ObjectDoesNotExist: {0}'.format(e)
+                        error_msg = 'ObjectDoesNotExist: %s' % e
                         log.debug(error_msg)
                         return HttpResponseBadRequest(error_msg)
                 elif type(f) == ManyToManyField:
                     log.debug('ManyToMany field...')
                     try:
                         m2mobjs[f.name] = f.rel.to.objects.filter(pk__in=attrs[f.name])
-                        log.debug('-- m2m len: {0}'.format(len(m2mobjs[f.name])))
-                        log.debug('-- attrs len: {0}'.format(len(attrs[f.name])))
+                        log.debug('-- m2m len: %s' % len(m2mobjs[f.name]))
+                        log.debug('-- attrs len: %s' % len(attrs[f.name]))
                                   
                         if len(m2mobjs[f.name]) != len(attrs[f.name]):
                             error_msg = 'ObjectDoesNotExist: A ManyToMany primary_key value failed to return an object.'
                             log.debug(error_msg)
                             return HttpResponseBadRequest(error_msg)
-                        log.debug('-- m2mobjs: {0}'.format(m2mobjs[f.name]))
+                        log.debug('-- m2mobjs: %s' % m2mobjs[f.name])
                         del attrs[f.name] # passing this into model(**attrs) throws an error
                     except ObjectDoesNotExist, e:
-                        error_msg = 'ObjectDoesNotExist: {0}'.format(e)
+                        error_msg = 'ObjectDoesNotExist: %s' % e
                         log.debug(error_msg)
                         return HttpResponseBadRequest(error_msg)
             elif required and f.name not in attrs:
-                error_msg = 'Required field {0} not found.'.format(f.name)
+                error_msg = 'Required field %s not found.' % f.name
                 log.debug(error_msg)
                 return HttpResponseBadRequest(error_msg)
         
-        log.debug('POST attrs" {0}'.format(attrs))
+        #log.debug('POST attrs" {0}'.format(attrs))
         
         try:
             inst = self.model.objects.get(**attrs)
@@ -209,14 +209,14 @@ class DefaultHandler(BaseHandler):
             # add M2M related field objs
             if len(m2mobjs):
                 for k, v in m2mobjs.items():
-                    log.debug('k:v = {0}:{1}'.format(k, v))
+                    #log.debug('k:v = {0}:{1}'.format(k, v))
                     f = getattr(inst, k)
                     for val in v:
                         try:
                             f.add(val)
                             inst.save()
                         except:
-                            error_msg = 'Error adding {0} to {1} {2} field'.format(val, inst, f)
+                            error_msg = 'Error adding %s to %s %s field' % (val, inst, f)
                             log.debug(error_msg)
                             return HttpResponseBadRequest(error_msg)
             

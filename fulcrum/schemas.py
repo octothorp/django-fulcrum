@@ -218,7 +218,7 @@ def get_schema(model, format='json', pretty=True):
     try:
         cls, content_type = map[format]
     except KeyError:
-        return 'The format you specified, {0}, corresponds to no known schema type.'.format(format)
+        return 'The format you specified, %s, corresponds to no known schema type.' % format
     return cls(model).text(pretty=pretty)
     
     
@@ -227,7 +227,7 @@ def get_schema_view(model, format, pretty=True):
     try:
         cls, content_type = map[format]
     except KeyError:
-        return 'The format you specified, {0}, corresponds to no known schema type.'.format(format)
+        return 'The format you specified, %s, corresponds to no known schema type.' % format
     return HttpResponse(cls(model).text(pretty=pretty), content_type)
 
 map = {

@@ -1,6 +1,5 @@
 import logging, sys
 
-INITIALIZED = False
 FORMAT = '[ %(levelname)s ] :: %(message)s'
 
 def debug(msg, *args, **kwargs):
@@ -27,8 +26,3 @@ def basicConfig():
         'level': logging.DEBUG,
         'format': FORMAT
     }
-    
-
-if not INITIALIZED:
-    INITIALIZED = True
-    init(basicConfig())

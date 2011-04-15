@@ -60,7 +60,7 @@ class FulcrumSite(object):
         resource = Resource(handler, self, name, authentication, group)
         
         if resource.name in self.registry:
-            raise AlreadyRegistered('The resource {0} is already registered'.format(resource.name))
+            raise AlreadyRegistered('The resource %s is already registered' % resource.name)
         self.registry[resource.name] = resource
     
     
@@ -72,7 +72,7 @@ class FulcrumSite(object):
         group = group or self.group
         resource = ArbitraryResource(handler_class(), self, name, authentication, group)
         if resource.name in self.registry:
-            raise AlreadyRegistered('The arbitrary resource {0} is already registered'.format(resource.name))
+            raise AlreadyRegistered('The arbitrary resource %s is already registered' % resource.name)
         self.registry[resource.name] = resource
     
         
@@ -82,7 +82,7 @@ class FulcrumSite(object):
         """
         
         if resource.name not in self.registry:
-            raise NotRegistered('The resource {0} has not been registered'.format(resource.name))
+            raise NotRegistered('The resource %s has not been registered' % resource.name)
         del self.registry[resource.name]
     
     
@@ -208,7 +208,7 @@ class FulcrumSite(object):
         Resource data
         """
         
-        log.debug('resource_data_format(): {0}'.format(format))
+        log.debug('resource_data_format(): %s' % format)
         
         try:
             resource = self.registry[resource_name]
@@ -240,7 +240,7 @@ class FulcrumSite(object):
         protocol = request.META['SERVER_PROTOCOL'].split('/')[0].lower()
         host = request.META['HTTP_HOST']
         path_info = request.META['PATH_INFO'].lstrip('/').rstrip('/api')
-        example_uri = '{0}://{1}/{2}'.format(protocol, host, path_info)
+        example_uri = '%s://%s/%s' % (protocol, host, path_info)
         
         return render_to_response('fulcrum/resource_api.html',
                                   { 'resource': resource, 'example_uri': example_uri },

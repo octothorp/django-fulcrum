@@ -70,7 +70,7 @@ class EasyField(object):
             if resource is None or resource.name not in self.model.resource.site.get_resource_list():
                 return [(f_field[0].rel.to.__name__, None)]
             else:
-                return [(f_field[0].rel.to.__name__, '{0}/api'.format(resource.name))]
+                return [(f_field[0].rel.to.__name__, '%s/api' % resource.name)]
         else:
             return [(self.field.get_internal_type(), None)]
     
@@ -83,8 +83,8 @@ class EasyField(object):
                 return 'No description available'
         elif type(self.field) == CharField:
             if self.max_length > 1:
-                return 'String (up to {0} characters)'.format(self.max_length)
-            return 'String (up to {0} character)'.format(self.max_length)
+                return 'String (up to %s characters)' % self.max_length
+            return 'String (up to %s character)' % self.max_length
         else:
             return self.field.description
         
@@ -121,7 +121,7 @@ class EasyInstance(object):
         return self.__unicode__().encode('utf-8')
         
     def url(self):
-        return mark_safe('{0}/{1}'.format(self.model.resource.name, self.pk()))
+        return mark_safe('%s/%s' % (self.model.resource.name, self.pk()))
 
     def pk(self):
         return self.instance._get_pk_val()
@@ -199,7 +199,7 @@ class EasyInstanceField(object):
             if resource.name in self.model.resource.site.get_resource_list():
                 lst = []
                 for value in self.values():
-                    url = mark_safe('{0}/{1}'.format(resource.name, iri_to_uri(value._get_pk_val())))
+                    url = mark_safe('%s/%s' % (resource.name, iri_to_uri(value._get_pk_val())))
                     lst.append((smart_unicode(value), url))
             else:
                 lst = [(value, None) for value in self.values()]

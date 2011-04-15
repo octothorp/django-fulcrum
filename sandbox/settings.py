@@ -3,17 +3,25 @@ import sys, os
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG   
 
+BASE_PATH = os.path.dirname(os.path.abspath(__file__))
+
+# add fulcrum
+sys.path.insert(0, os.path.join(BASE_PATH, '../'))
+#sys.path.append(os.path.join(BASE_PATH, '../'))
+
+if DEBUG:
+    import logging
+    logging.basicConfig(
+        level= logging.DEBUG,
+        filename = '/vdev/exc/logs/django/debug_log.txt',
+        format = '%(filename)-20s : %(message)s'
+    )
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
 MANAGERS = ADMINS
-
-BASE_PATH = os.path.dirname(os.path.abspath(__file__))
-
-# add fulcrum
-sys.path.insert(0, os.path.join(BASE_PATH, '../'))
 
 DATABASES = {
     'default': {
