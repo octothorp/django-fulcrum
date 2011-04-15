@@ -22,8 +22,10 @@
         <h2>{{ group }}</h2>
         {% for resource in r_list %}
 		<div class="modelgroup {% cycle 'even' 'odd' %}">
-            <h2>{{ resource.verbose_name|capfirst }}</h2>
-			<p><a href="{{ resource.api_url }}">API</a><a href="{{ resource.data_url }}">Data</a></p>
+            <a href="{{ resource.data_url }}">
+                <h2>{{ resource.verbose_name|capfirst }}</h2>
+                <p><a href="{{ resource.api_url }}">API</a><a href="{{ resource.data_url }}">Data</a></p>
+            </a>
 		</div>
         {% endfor %}
 	{% endfor %}
