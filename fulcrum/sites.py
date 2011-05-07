@@ -207,7 +207,7 @@ class FulcrumSite(object):
                                       { 'error_msg': error_msg },
                                       context_instance=RequestContext(request))
         
-        return resource(request, emitter_format=format)
+        return resource.handle(request, emitter_format=format)
     
     
     def resource_api(self, request, resource_name, *args, **kwargs):
@@ -282,7 +282,7 @@ class FulcrumSite(object):
                                       { 'object': object },
                                       context_instance=RequestContext(request))
         else:
-            return resource(request, pk=primary_key, emitter_format=format)
+            return resource.handle(request, pk=primary_key, emitter_format=format)
             
 # Create Fulcrum instance        
 site = FulcrumSite()

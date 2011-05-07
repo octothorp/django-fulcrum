@@ -62,7 +62,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
-ROOT_URLCONF = 'sandbox.urls'
+ROOT_URLCONF = 'sb-fulcrum.urls'
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_PATH, 'templates'),
@@ -77,7 +77,7 @@ INSTALLED_APPS = (
     #'django.contrib.messages',
     'django.contrib.admin',
     'django.contrib.markup',
-    'sandbox.blog',
+    'sb-fulcrum.blog',
     'fulcrum',
 )
 

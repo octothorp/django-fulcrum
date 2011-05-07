@@ -92,7 +92,7 @@ class Resource(object):
         return 0
     
     @vary_on_headers('Authorization')
-    def __call__(self, request, *args, **kwargs):
+    def handle(self, request,*args, **kwargs):
         """
         NB: Sends a `Vary` header so we don't cache requests
         that are different (OAuth stuff in `Authorization` header.)
