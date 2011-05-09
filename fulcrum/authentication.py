@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.auth.decorators import login_required
 from django.template import loader
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.conf import settings
 from django.core.urlresolvers import get_callable
 from django.core.exceptions import ImproperlyConfigured
@@ -20,6 +20,43 @@ class NoAuthentication(object):
     """
     def is_authenticated(self, request):
         return True
+
+class DjangoAuthentication(object):
+    """
+    Django authenticator.
+    """
+    
+    def __init__(self, realm='API'):
+        self.realm = realm
+    
+    def is_authenticated(self, request):
+        
+        if request.user.is_authenticated():
+            return True
+        
+        auth_string = request.META.get('HTTP_AUTHORIZATION', None)
+
+        if not auth_string:
+            return False
+            
+        (authmeth, auth) = auth_string.split(" ", 1)
+        
+        if not authmeth.lower() == 'basic':
+            return False
+            
+        auth = auth.strip().decode('base64')
+        (username, password) = auth.split(':', 1)
+        
+        request.user = authenticate(username=username, password=password) \
+            or AnonymousUser()
+        
+        return not request.user in (False, None, AnonymousUser())
+        
+    def challenge(self):
+        resp = HttpResponse("Authorization Required")
+        resp['WWW-Authenticate'] = 'Basic realm="%s"' % self.realm
+        resp.status_code = 401
+        return resp
 
 class HttpBasicAuthentication(object):
     """
