@@ -199,6 +199,9 @@ class FulcrumSite(object):
         
         log.debug('resource_data_format(): %s' % format)
         
+        for k, v in request.GET.items():
+            kwargs[str(k)] = str(v)
+        
         try:
             resource = self.registry[resource_name]
         except KeyError:
@@ -207,7 +210,7 @@ class FulcrumSite(object):
                                       { 'error_msg': error_msg },
                                       context_instance=RequestContext(request))
         
-        return resource.handle(request, emitter_format=format)
+        return resource.handle(request, emitter_format=format, *args, **kwargs)
     
     
     def resource_api(self, request, resource_name, *args, **kwargs):
