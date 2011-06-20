@@ -27,8 +27,9 @@ import json
 
 from django.http import HttpResponse
 
-from django.db.models.fields import (AutoField, CharField, FloatField, 
-SlugField, EmailField, IntegerField, BooleanField, DateField, DateTimeField )
+from django.db.models.fields import *
+from django.db.models.fields.files import FileField, ImageField
+from django.db.models.fields.related import ForeignKey, ManyToManyField, OneToOneField
 
 from xml.dom import getDOMImplementation
 impl = getDOMImplementation()
@@ -184,22 +185,42 @@ class JSONSchema(Schema):
             elif cls == CharField:
                 info["type"] = "string"
                 info["maxLength"] = field.max_length
-            elif cls == FloatField:
+            elif cls == FloatField or cls == DecimalField:
                 info["type"] = "number"
             elif cls == SlugField:
                 info["type"] = "string"
             elif cls == EmailField:
                 info["type"] = "string"
-            elif cls == IntegerField:
+            elif cls == BigIntegerField or cls == IntegerField or cls == PositiveIntegerField or cls == PositiveSmallIntegerField or cls == SmallIntegerField:
                 info["type"] = "integer"
-            elif cls == BooleanField:
+            elif cls == BooleanField or cls == NullBooleanField:
                 info["type"] = "boolean"
             elif cls == DateField:
                 info["type"] = "string"
                 info["format"] = "date"
+            elif cls == TimeField:
+                info["type"] = "string"
+                info["format"] = "time"
             elif cls == DateTimeField:
                 info["type"] = "string"
                 info["format"] = "date-time"
+            elif cls == FileField:
+                info["type"] = "file"
+            elif cls == ImageField:
+                info["type"] = "image"
+            elif cls == TextField:
+                info["type"] = "string"
+            elif cls == URLField:
+                info["type"] = "string"
+            elif cls == XMLField:
+                info["type"] = "xml"
+            elif cls == ForeignKey:
+                info["type"] = "object"
+            elif cls == ManyToManyField:
+                info["type"] = "object"
+            elif cls == OneToOneField:
+                info["type"] = "object"
+                
             
             properties[field.name] = info
         
