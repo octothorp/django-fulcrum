@@ -240,7 +240,9 @@ class DefaultAnonymousHandler(DefaultHandler):
 
 
 class BaseArbitraryHandler(object):
-    
+    """
+    Base arbitrary resource handler. Extend this class and override necessary methods.
+    """
     __metaclass__ = HandlerMetaClass
     
     allowed_methods = ('GET', 'POST', 'PUT', 'DELETE')
@@ -249,16 +251,29 @@ class BaseArbitraryHandler(object):
     fields =  ( )
     
     def read(self, request, *args, **kwargs):
-        return 'You must implement read method in your custom handler'
+        return 'You must implement a read method in your custom handler'
     
     def create(self, request, *args, **kwargs):
-        return 'You must implement create method in your custom handler'
+        return 'You must implement a create method in your custom handler'
     
     def update(self, request, *args, **kwargs):
-        return 'You must implement update method in your custom handler'
+        return 'You must implement a update method in your custom handler'
     
     def delete(self, request, *args, **kwargs):
-        return 'You must implement delete method in your custom handler'
+        return 'You must implement a delete method in your custom handler'
+
+# -- helpers
+    
+    def data_html(self):
+        log.debug('data_html')
+        return 'You must implement a data_html method in your custom handler'
+
+    def data_schema(self):
+        log.debug('data_schema')
+        return { 'description': BaseArbitraryHandler.__doc__,
+                 'handler': BaseArbitraryHandler.__name__,
+                 'params': 'You must override data_schema method to provide necessary parameters.',
+                 'return_value': 'You must override data_schema method to provide expected return value.' }
     
 class BaseAnonymouseArbitraryHandler(BaseArbitraryHandler):
     is_anonymous = True

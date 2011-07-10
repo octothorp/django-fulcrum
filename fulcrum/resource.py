@@ -64,9 +64,9 @@ class Resource(object):
         self.authentication = authentication
         self.arbitrary = False
         # Erroring
-        self.email_errors = getattr(settings, 'PISTON_EMAIL_ERRORS', True)
-        self.display_errors = getattr(settings, 'PISTON_DISPLAY_ERRORS', True)
-        self.stream = getattr(settings, 'PISTON_STREAM_OUTPUT', False)
+        self.email_errors = getattr(settings, 'FULCRUM_EMAIL_ERRORS', True)
+        self.display_errors = getattr(settings, 'FULCRUM_DISPLAY_ERRORS', True)
+        self.stream = getattr(settings, 'FULCRUM_STREAM_OUTPUT', False)
 
     def determine_emitter(self, request, *args, **kwargs):
         """
@@ -135,8 +135,14 @@ class Resource(object):
 
         # Support emitter both through (?P<emitter_format>) and ?format=emitter.
         em_format = self.determine_emitter(request, *args, **kwargs)
-
         kwargs.pop('emitter_format', None)
+
+        # result is just html, handled in template
+        # TODO: move this block into sites.py view handler
+        if em_format == 'html':
+            temp = get_template('fulcrum/resource_detail.html')
+            ctxt = RequestContext(request, { 'resource': self, 'handler': self.handler })
+            return HttpResponse(temp.render(ctxt))
         
         # Get recursion level
         recurse_level = self.get_recurse_level(request)
@@ -180,12 +186,12 @@ class Resource(object):
             user. There's two setting parameters for this:
             
             Parameters::
-             - `PISTON_EMAIL_ERRORS`: Will send a Django formatted
+             - `FULCRUM_EMAIL_ERRORS`: Will send a Django formatted
                error email to people in `settings.ADMINS`.
-             - `PISTON_DISPLAY_ERRORS`: Will return a simple traceback
+             - `FULCRUM_DISPLAY_ERRORS`: Will return a simple traceback
                to the caller, so he can tell you what error they got.
                
-            If `PISTON_DISPLAY_ERRORS` is not enabled, the caller will
+            If `FULCRUM_DISPLAY_ERRORS` is not enabled, the caller will
             receive a basic "500 Internal Server Error" message.
             """
             
@@ -200,29 +206,25 @@ class Resource(object):
             else:
                 raise
         
-        if em_format == 'html':
-            temp = get_template('fulcrum/resource_detail.html')
-            ctxt = RequestContext(request, {'resource': self})
-            return HttpResponse(temp.render(ctxt))
-        else:
-            emitter, ct = Emitter.get(em_format)
-            srl = emitter(result, recurse_level, typemapper, handler, handler.fields, anonymous)
+        # Return serialized data
+        emitter, ct = Emitter.get(em_format)
+        srl = emitter(result, recurse_level, typemapper, handler, handler.fields, anonymous)
         
-            try:
-                """
-                Decide whether or not we want a generator here,
-                or we just want to buffer up the entire result
-                before sending it to the client. Won't matter for
-                smaller datasets, but larger will have an impact.
-                """
-                if self.stream: stream = srl.stream_render(request)
-                else: stream = srl.render(request)
-                
-                resp = HttpResponse(stream, mimetype=ct)
-                resp.streaming = self.stream
-                return resp
-            except HttpStatusCode, e:
-                return e.response
+        try:
+            """
+            Decide whether or not we want a generator here,
+            or we just want to buffer up the entire result
+            before sending it to the client. Won't matter for
+            smaller datasets, but larger will have an impact.
+            """
+            if self.stream: stream = srl.stream_render(request)
+            else: stream = srl.render(request)
+            
+            resp = HttpResponse(stream, mimetype=ct)
+            resp.streaming = self.stream
+            return resp
+        except HttpStatusCode, e:
+            return e.response
 
     @staticmethod
     def cleanup_request(request):
@@ -247,7 +249,7 @@ class Resource(object):
     # -- 
     
     def email_exception(self, reporter):
-        subject = "Piston crash report"
+        subject = "Fulcrum crash report"
         html = reporter.get_traceback_html()
 
         message = EmailMessage(settings.EMAIL_SUBJECT_PREFIX+subject,
@@ -320,14 +322,14 @@ class ArbitraryResource(Resource):
         self.group = group
         
         # Erroring
-        self.email_errors = getattr(settings, 'PISTON_EMAIL_ERRORS', True)
-        self.display_errors = getattr(settings, 'PISTON_DISPLAY_ERRORS', True)
-        self.stream = getattr(settings, 'PISTON_STREAM_OUTPUT', False)
+        self.email_errors = getattr(settings, 'FULCRUM_EMAIL_ERRORS', True)
+        self.display_errors = getattr(settings, 'FULCRUM_DISPLAY_ERRORS', True)
+        self.stream = getattr(settings, 'FULCRUM_STREAM_OUTPUT', False)
+        
+    # def get_schema(self, schema):
+    #     return '#'
     
-    def get_schema(self, schema):
-        return '#'
-    
-    def get_schema_view(self, schema):
-        return '#'
+    # def get_schema_view(self, schema):
+    #     return '#'
         
         

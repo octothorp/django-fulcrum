@@ -235,7 +235,7 @@ class FulcrumSite(object):
         example_uri = '%s://%s/%s' % (protocol, host, path_info)
         
         return render_to_response('fulcrum/resource_api.html',
-                                  { 'resource': resource, 'example_uri': example_uri },
+                                  { 'resource': resource, 'handler': resource.handler, 'example_uri': example_uri },
                                   context_instance=RequestContext(request))
     
         

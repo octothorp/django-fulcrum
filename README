@@ -1,5 +1,9 @@
-Basic usage
+Fulcrum makes significant use of the following:
+1. django-piston (https://bitbucket.org/jespern/django-piston)
+2. django-model-schemas (https://bitbucket.org/eegg/django-model-schemas)
 
-1. Add fulcrum to installed apps
-2. Include fulcrum in your url conf
-2. Register a model with fulcrum
+Basic usage
+1. Get the latest version (https://github.com/octothorp/django-fulcrum)
+2. Add fulcrum to installed apps
+3. Include fulcrum in your url conf
+4. Register a model with fulcrum

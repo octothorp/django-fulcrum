@@ -6,19 +6,27 @@
 
 <div class="arrowtitle">
     <img src="/media/fulcrum/images/orange_arrow.png"/>
-    <h1>{{ resource.objects.count }} {% if resource.objects.count|pluralize %}{{ resource.verbose_name_plural }}{% else %}{{ resource.verbose_name }}{% endif %}</h1>
+    {% if resource.arbitrary %}
+        <h1>{{ resource.verbose_name }}</h1>
+    {% else %}
+        <h1>{{ resource.objects.count }} {% if resource.objects.count|pluralize %}{{ resource.verbose_name_plural }}{% else %}{{ resource.verbose_name }}{% endif %}</h1>
+    {% endif %}
 </div>
 
 <div id="resourcelist">
     <p>View as: <a href="{% url fulcrum:fulcrum_index %}{{ resource.data_url }}.json">JSON</a>, <a href="{% url fulcrum:fulcrum_index %}{{ resource.data_url }}.xml">XML</a></p>
-    <ul class="objectlist">
-    {% for object in resource.objects %}
-        <li class="{% cycle 'odd' 'even' %}">
+    {% if resource.arbitrary %}
+        <p>{{ handler.data_html }}</p>
+    {% else %}
+        <ul class="objectlist">
+          {% for object in resource.objects %}
+          <li class="{% cycle 'odd' 'even' %}">
             <a href="{% url fulcrum:fulcrum_index %}{{ object.url }}">
-                {{ object }} ( pk = {{ object.pk }} )
+              {{ object }} ( pk = {{ object.pk }} )
             </a>
-        </li>
-    {% endfor %}
-    </ul>
+          </li>
+          {% endfor %}
+        </ul>
+    {% endif %}
 </div>
 {% endblock %}

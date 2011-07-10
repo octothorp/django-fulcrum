@@ -42,52 +42,71 @@
         </tr>
     </table>
 </div>
-{% if not resource.arbitrary %}
 <div id="schema">
-    <div id="schemaheader">
-        <h2>Schema</h2>
-        <p>View Schema as:
-        {% for key, value in resource.schema_urls.items %}
-            <a href="{% url fulcrum:fulcrum_index %}{{ value }}">{{ key|upper }}</a>{% if not forloop.last %},{% endif %}
+  <div id="schemaheader">
+    <h2>Schema</h2>
+    {% if not resource.arbitrary %}
+    <p>View Schema as:
+      {% for key, value in resource.schema_urls.items %}
+      <a href="{% url fulcrum:fulcrum_index %}{{ value }}">{{ key|upper }}</a>{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    </p>
+    {% endif %}
+  </div>
+  
+{% if resource.arbitrary %}
+  <table id="schematable">
+    <tr>
+      <th width="100px">Handler</th>
+      <th width="150px">Params</th>
+      <th width="150px">Return Value</th>
+      <th width="100%">Description</th>
+    </tr>
+    <tr>
+      <th class="nobg">{{ handler.data_schema.handler }}</th>
+      <th class="nobg">{{ handler.data_schema.params }}</th>
+      <th class="nobg">{{ handler.data_schema.return_value }}</th>
+      <th class="nobg">{{ handler.data_schema.description }}</th>
+    </tr>
+  </table>
+{% else %}
+
+  <table id="schematable">
+    <tr>
+      <th width="90px">Field Name</th>
+      <th width="120px">Type</th>
+      <th width="75px">Length</th>
+      <th width="100%">Description</th>
+      <th width="90px">Choices</th>
+      <th width="65px">NULL</th>
+      <th width="90px">Required</th>
+    </tr>
+    {% for field in resource.fields %}
+    <tr>
+      <th class="nobg">{{ field.name }}{%if field.field.primary_key %} *{% endif %}</th>
+      <!--<td>{{ field.type }}</td>-->
+      <td>
+        {% for value, url in field.type %}
+        {% if url %}<a href="{% url fulcrum:fulcrum_index %}{{ url }}">{% endif %}{{ value }}{% if url %}</a>{% endif %}
         {% endfor %}
-        </p>
-    </div>
-    <table id="schematable">
-        <tr>
-            <th width="90px">Field Name</th>
-            <th width="120px">Type</th>
-            <th width="75px">Length</th>
-            <th width="100%">Description</th>
-            <th width="90px">Choices</th>
-            <th width="65px">NULL</th>
-            <th width="90px">Required</th>
-        </tr>
-        {% for field in resource.fields %}
-            <tr>
-                <th class="nobg">{{ field.name }}{%if field.field.primary_key %} *{% endif %}</th>
-                <!--<td>{{ field.type }}</td>-->
-                <td>
-                    {% for value, url in field.type %}
-                        {% if url %}<a href="{% url fulcrum:fulcrum_index %}{{ url }}">{% endif %}{{ value }}{% if url %}</a>{% endif %}
-                    {% endfor %}
-                </td>
-                <td>{{ field.max_length }}</td>
-                <td>{{ field.description }}</td>
-                <td>
-                    {% if field.has_choices %}
-                        {% for choice in field.choices %}
-                            {{ choice.value }}{% if not forloop.last %},{% endif %}
-                        {% endfor %}
-                    {% else %}
-                        None
-                    {% endif %}
-                </td>
-                <td class="{% if field.null %}spectrue{% else %}specfalse{% endif %}"></td>
-                <td class="{% if field.blank %}specfalse{% else %}spectrue{% endif %}"></td>
-            </tr>
+      </td>
+      <td>{{ field.max_length }}</td>
+      <td>{{ field.description }}</td>
+      <td>
+        {% if field.has_choices %}
+        {% for choice in field.choices %}
+        {{ choice.value }}{% if not forloop.last %},{% endif %}
         {% endfor %}
-    </table>
-    <p>* Primary key</p>
+        {% else %}
+        None
+        {% endif %}
+      </td>
+      <td class="{% if field.null %}spectrue{% else %}specfalse{% endif %}"></td>
+      <td class="{% if field.blank %}specfalse{% else %}spectrue{% endif %}"></td>
+    </tr>
+    {% endfor %}
+  </table>
+  <p>* Primary key</p>
 </div>
 {% endif %}
 <div id="connection">
