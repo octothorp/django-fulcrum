@@ -196,7 +196,7 @@ class EasyInstanceField(object):
         if self.field.rel:
             resource = self.model.resource.site.get_resource_by_model(self.field.rel.to)
             
-            if resource.name in self.model.resource.site.get_resource_list():
+            if resource and resource.name in self.model.resource.site.get_resource_list():
                 lst = []
                 for value in self.values():
                     url = mark_safe('%s/%s' % (resource.name, iri_to_uri(value._get_pk_val())))
