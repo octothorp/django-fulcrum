@@ -127,7 +127,7 @@ class DefaultHandler(BaseHandler):
     
     def __init__(self, model):
         self.model = model
-        self.fields = tuple([f.name for f in self.model._meta.fields])
+        self.fields = tuple([f.name for f in self.model._meta.fields + self.model._meta.many_to_many])
         
     
     def create(self, request, *args, **kwargs):
@@ -141,16 +141,10 @@ class DefaultHandler(BaseHandler):
         if not self.has_model():
             return rc.NOT_IMPLEMENTED
         
-        #log.debug('request.POST: %s' % request.POST)
-        #dct = request.POST
-        #attrs = dict([ (str(k), dct.getlist(k)) for k in dct.keys() ])
         attrs = self.flatten_dict(request.POST)
-        #log.debug('PRE attrs" {0}'.format(attrs))
         for k in attrs.keys():
             if len(attrs[k]) == 1:
                 attrs[k] = attrs[k][0]
-        
-        #log.debug('PRE PRE attrs" {0}'.format(attrs))
         
         m2mobjs = {}
         for f in self.model._meta.local_fields + self.model._meta.many_to_many:
@@ -159,7 +153,6 @@ class DefaultHandler(BaseHandler):
             if required and f.name in attrs:
                 
                 if type(f) == ForeignKey:
-                    log.debug('ForeignKey field...')
                     try:
                         obj = f.rel.to.objects.get(pk=attrs[f.name])
                         attrs[f.name] = obj
@@ -168,17 +161,13 @@ class DefaultHandler(BaseHandler):
                         log.debug(error_msg)
                         return HttpResponseBadRequest(error_msg)
                 elif type(f) == ManyToManyField:
-                    log.debug('ManyToMany field...')
                     try:
                         m2mobjs[f.name] = f.rel.to.objects.filter(pk__in=attrs[f.name])
-                        log.debug('-- m2m len: %s' % len(m2mobjs[f.name]))
-                        log.debug('-- attrs len: %s' % len(attrs[f.name]))
                                   
                         if len(m2mobjs[f.name]) != len(attrs[f.name]):
                             error_msg = 'ObjectDoesNotExist: A ManyToMany primary_key value failed to return an object.'
                             log.debug(error_msg)
                             return HttpResponseBadRequest(error_msg)
-                        log.debug('-- m2mobjs: %s' % m2mobjs[f.name])
                         del attrs[f.name] # passing this into model(**attrs) throws an error
                     except ObjectDoesNotExist, e:
                         error_msg = 'ObjectDoesNotExist: %s' % e
@@ -188,8 +177,6 @@ class DefaultHandler(BaseHandler):
                 error_msg = 'Required field %s not found.' % f.name
                 log.debug(error_msg)
                 return HttpResponseBadRequest(error_msg)
-        
-        #log.debug('POST attrs" {0}'.format(attrs))
         
         try:
             inst = self.model.objects.get(**attrs)
