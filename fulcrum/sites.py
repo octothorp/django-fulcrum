@@ -2,7 +2,7 @@ import os
 from django import http
 from django.db import models
 from django.shortcuts import render_to_response
-from django.utils.functional import update_wrapper
+from functools import update_wrapper
 from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.cache import never_cache
@@ -125,14 +125,14 @@ class FulcrumSite(object):
     
     
     def get_urls(self):
-        from django.conf.urls.defaults import patterns, url, include
+        from django.conf.urls import patterns, url, include
 
         def wrap(view, cacheable=False):
             def wrapper(*args, **kwargs):
                 return self.fulcrum_view(view, cacheable)(*args, **kwargs)
             return update_wrapper(wrapper, view)
             
-        urlpatterns = patterns('',
+        urlpatterns = [
             url(r'^$', # root
                 wrap(self.index),
                 name='fulcrum_index'),
@@ -164,7 +164,7 @@ class FulcrumSite(object):
             url(r'^(?P<resource_name>\w+)/(?P<primary_key>\w+)\.(?P<format>\w+)$', # ex: resource_name/1.json
                 wrap(self.object_data_format),
                 name='fulcrum_object_data_format'),
-        )
+        ]
         
         return urlpatterns
     

@@ -16,16 +16,17 @@ from utils import rc, format_error, translate_mime, MimerDataException
 
 from django.db import models
 from django.db.models.query import QuerySet
-from django.db.models.options import get_verbose_name
+#from django.db.models.options import get_verbose_name
+from django.utils.text import camel_case_to_spaces as get_verbose_name
 from django.db.models.options import string_concat
 from django.utils import formats
 from django.utils.text import capfirst
 from django.utils.encoding import smart_unicode, smart_str, iri_to_uri
 from django.utils.safestring import mark_safe
-from django.contrib.contenttypes.models import ContentType
+#from django.contrib.contenttypes.models import ContentType
 from django.template.loader import get_template
 from django.template import Context, RequestContext
-from django.contrib.sites.models import Site
+#from django.contrib.sites.models import Site
 
 from datastructures import EasyModel
 import schemas
@@ -57,7 +58,7 @@ class Resource(object):
             self.verbose_name = get_verbose_name(self.name)
             self.verbose_name_plural = string_concat(self.verbose_name, 's')
         else:
-            self.name = self.model._meta.module_name
+            self.name = self.model._meta.model_name
             self.verbose_name = self.model._meta.verbose_name
             self.verbose_name_plural = self.model._meta.verbose_name_plural
         

@@ -1,7 +1,7 @@
 from utils import rc
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned, ValidationError
 from django.db.models import ForeignKey, ManyToManyField
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseBadRequest
 from fulcrum import log, schemas
 
