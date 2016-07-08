@@ -1,6 +1,7 @@
 import urllib
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
+#from django.contrib.auth.models import User
 from django.contrib import admin
 from django.conf import settings
 from django.core.mail import send_mail, mail_admins
@@ -51,7 +52,7 @@ class Consumer(models.Model):
     secret = models.CharField(max_length=SECRET_SIZE)
 
     status = models.CharField(max_length=16, choices=CONSUMER_STATES, default='pending')
-    user = models.ForeignKey(User, null=True, blank=True, related_name='consumers')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='consumers')
 
     objects = ConsumerManager()
         
@@ -59,12 +60,12 @@ class Consumer(models.Model):
         return u"Consumer %s with key %s" % (self.name, self.key)
 
     def generate_random_codes(self):
-        key = User.objects.make_random_password(length=KEY_SIZE)
+        key = settings.AUTH_USER_MODEL.objects.make_random_password(length=KEY_SIZE)
 
-        secret = User.objects.make_random_password(length=SECRET_SIZE)
+        secret = settings.AUTH_USER_MODEL.objects.make_random_password(length=SECRET_SIZE)
 
         while Consumer.objects.filter(key__exact=key, secret__exact=secret).count():
-            secret = User.objects.make_random_password(length=SECRET_SIZE)
+            secret = settings.AUTH_USER_MODEL.objects.make_random_password(length=SECRET_SIZE)
 
         self.key = key
         self.secret = secret
@@ -120,7 +121,7 @@ class Token(models.Model):
     timestamp = models.IntegerField()
     is_approved = models.BooleanField(default=False)
     
-    user = models.ForeignKey(User, null=True, blank=True, related_name='tokens')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='tokens')
     consumer = models.ForeignKey(Consumer)
     
     objects = TokenManager()
@@ -138,11 +139,11 @@ class Token(models.Model):
         return urllib.urlencode(token_dict)
 
     def generate_random_codes(self):
-        key = User.objects.make_random_password(length=KEY_SIZE)
-        secret = User.objects.make_random_password(length=SECRET_SIZE)
+        key = settings.AUTH_USER_MODEL.objects.make_random_password(length=KEY_SIZE)
+        secret = settings.AUTH_USER_MODEL.objects.make_random_password(length=SECRET_SIZE)
 
         while Token.objects.filter(key__exact=key, secret__exact=secret).count():
-            secret = User.objects.make_random_password(length=SECRET_SIZE)
+            secret = settings.AUTH_USER_MODEL.objects.make_random_password(length=SECRET_SIZE)
 
         self.key = key
         self.secret = secret

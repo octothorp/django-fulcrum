@@ -1,6 +1,6 @@
 import oauth
 from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth.models import User, AnonymousUser
+#from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.contrib.auth import authenticate, login
@@ -123,12 +123,14 @@ def load_data_store():
     return cls
 
 # Set the datastore here.
-oauth_datastore = load_data_store()
+#oauth_datastore = load_data_store()
 
 def initialize_server_request(request):
     """
     Shortcut for initialization.
     """
+    oauth_datastore = load_data_store()
+
     oauth_request = oauth.OAuthRequest.from_request(
         request.method, request.build_absolute_uri(), 
         headers=request.META, parameters=dict(request.REQUEST.items()),

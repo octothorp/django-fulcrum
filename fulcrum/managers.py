@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 
 KEY_SIZE = 16
 SECRET_SIZE = 16
